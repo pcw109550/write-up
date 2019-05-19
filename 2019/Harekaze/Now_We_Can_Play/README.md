@@ -42,7 +42,11 @@ m = m_ * inverse(pow(3, rand, p)) % p
 Therefore, by bruteforcing to know the value of `rand`, we directly recover `m`! We only have to brute for maximally `2 ** 16` times, so it is possible. By sending a single request with `in_c1 = c1` and `in_c2 = c2`, we may successfully recover the flag `m`. We checked the candidates by using the fact that the flag must be printable.
 
 By bruteforcing `rand` for about 1 or 2 seconds, we get the flag:
-flag = `HarekazeCTF{im_caught_in_a_dr3am_and_m7_dr3ams_c0m3_tru3}`
+
+```
+HarekazeCTF{im_caught_in_a_dr3am_and_m7_dr3ams_c0m3_tru3}
+```
 
 Full exploit code: [solve.py](solve.py)
+
 Original problem: [problem.py](problem.py)
