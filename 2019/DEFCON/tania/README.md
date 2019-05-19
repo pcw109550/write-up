@@ -4,7 +4,7 @@
 
 #### Understanding the system
 
-After some reversing of the given [binary](tania), we found out that the system **signs and executes commands** by the following rules. The parameter for the system is parsed and stored at [config.py](config.py).
+After some reversing of the given [binary](tania), we found out that the system **signs and executes commands** by the following rules. The parameter for the system is parsed and stored at [consts.py](consts.py).
 
 1. Commands are signed by [DSA](https://en.wikipedia.org/wiki/Digital_Signature_Algorithm)
 	- The system only allows us to obtain two signatures(`(r1, s1)`, `(r2, s2)`) by two commands `m1`, `m2`;
@@ -66,7 +66,7 @@ LCG solver: [LCG.sage](LCG.sage)
 
 Original binary: [tania](tania)
 
-Parsed parameters: [config.py](config.py)
+Parsed parameters: [consts.py](consts.py)
 
 Recoverd private key: [privkey](privkey)
 
