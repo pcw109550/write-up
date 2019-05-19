@@ -5,6 +5,7 @@ assert len(argv[1:]) == 6
 [r1, s1, r2, s2, z1, z2] = [int(x) for x in argv[1:]]
 
 
+# http://mslc.ctf.su/wp/plaidctf-2016-sexec-crypto-300/
 def Babai_closest_vector(M, G, target):
     # Babai's Nearest Plane algorithm
     small = target
@@ -14,6 +15,7 @@ def Babai_closest_vector(M, G, target):
             small -= M[i] * c
     return target - small
 
+# https://cseweb.ucsd.edu/~mihir/papers/dss-lcg.pdf
 B = Matrix([
     [-r1, -r2,     0,     0,     0, 2 / q,        0,        0,        0,        0], # x
     [ s1,   0,     0, -c[0], -c[3],     0, 2 / c[9],        0,        0,        0], # k1
