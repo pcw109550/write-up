@@ -1,0 +1,47 @@
+def sign(message, key):
+    # n: curve order
+    # G: generator
+    while True:
+        k = random.randint(1, n)
+        Q = G * k
+
+        hash_message = message + str(int(Q.x))
+        mhash = hashlib.sha256(hash_message)
+        r = int(mhash.hexdigest(), 16)
+        if r % n == 0:
+            continue
+
+        s = (k - (r * key)) % n
+        if s != 0:
+            return (r, s)
+
+
+def verify(message, signature):
+    # n: curve order
+    # G: generator
+    # H: public key H = key * G
+    r, s = signature
+    if r < 0 or s < 1 or s > n - 1:
+        return False
+
+    Q = (G * s) + (H * r)
+    if Q == 0:
+        return False
+
+    hash_message = message + str(int(Q.x))
+    mhash = hashlib.sha256(hash_message)
+    v = int(mhash.hexdigest(), 16)
+    return v == r
+
+
+request = {
+    'command': 'help',
+    'params': {
+        'command': 'info'
+    }
+}
+
+text = json.dumps(request, sort_keys=True)
+r, s = sign(text, privkey)
+sig = base64.b64encode((str(r) + '|' + str(s)).encode())
+request['sig'] = sig.decode('utf-8')

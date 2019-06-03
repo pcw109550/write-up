@@ -1,0 +1,66 @@
+{"command": "help", "params": {"command": "flag"}}
+        flag(name: Optional[str])
+        Retrieve flag by name.
+
+{"command": "help", "params": {"command": "help"}}
+        help(command: Optional[str])
+        Displays help information for supported commands.
+        Please provide the optional 'command' parameter
+        to specify which command you would like to know
+        more about. Without this parameters, you get this
+        this nice list of commands:
+            - help
+            - sign
+            - info
+            - spec
+            - flag
+            - save
+            - list
+
+{"command": "help", "params": {"command": "sign"}}
+        sign(command: str, params: Optional[Dict])
+        Generate a signed request for the given command.
+        Many commands can only be executing through a
+        signed request, but we will not sign flag(). If
+        you need access to the flag, please sign the
+        request manually. Authorized users will know
+        the signing key.
+
+{"command": "help", "params": {"command": "info"}}
+        info()
+        Get information about the current encryption setup.
+        For maximum security, this info will change with
+        every  session!
+
+{"command": "help", "params": {"command": "spec"}}
+        spec(mode: Optional[str])
+        Returns a specification for the request
+        signature scheme. Helpful for developers
+        who need to integrate with our service.
+
+        provide parameter 'mode' as one of:
+            sign, verify, request, all
+
+{"command": "help", "params": {"command": "save"}}
+        save(name: str, flag: str)
+        Store flag.
+
+
+{"command": "help", "params": {"command": "list"}}
+        list()
+        List contents of flag store
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
