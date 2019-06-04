@@ -18,8 +18,10 @@ iv = enc[:32]
 
 E = EllipticCurve(Zmod(p), [0, 0, 0, a, b])
 [G, P] = [E(P), E(Q)]
-assert(G in E and P in E)
-assert(G == d * P)
+
+assert G in E and P in E
+assert G == d * P
+
 R = IntegerModRing(p)
 
 out = bytes_to_long(iv)
