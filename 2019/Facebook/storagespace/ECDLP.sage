@@ -40,19 +40,7 @@ E = EllipticCurve(IntegerModRing(p), [0, 0, 0, a, b])
 G = E(Gx, Gy)
 H = E(Hx, Hy)
 
-# https://github.com/hgarrereyn/Th3g3ntl3man-CTF-Writeups/blob/master/2017/picoCTF_2017/problems/cryptography/ECC2/ECC2.md
-factors, exponents = zip(*factor(E.order()))
-primes = [pow(factors[i],exponents[i]) for i in range(len(factors))]
-dlogs = []
-print(primes)
-print(len(primes))
-
-for fac in primes:
-    t = int(G.order()) / int(fac)
-    dlog = discrete_log(t * H, t * G, operation="+")
-    dlogs += [dlog]
-    print("factor: "+str(fac)+", Discrete Log: "+str(dlog))
-key = crt(dlogs, primes)
+key = discrete_log(H, G, operation="+")
 
 # sanity check
 assert key * G == H

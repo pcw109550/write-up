@@ -71,12 +71,7 @@ def main():
 
     # Breaking discrete log with pohlig hellman algorithm
     DISCRETE_LOG = process(["/usr/local/src/SageMath/sage", "ECDLP.sage"] + arg_list)
-    primes = DISCRETE_LOG.recvline().strip()
-    log.info("prime list: " + primes)
-    primelen = int(DISCRETE_LOG.recvline().strip())
     log.info("Solving ECDLP with pohlig hellman algorithm")
-    for i in range(primelen):
-        log.info(DISCRETE_LOG.recvline().strip())
     key = int(DISCRETE_LOG.recvline().strip())
     log.success("privkey: {:d}".format(key))
     sig = DISCRETE_LOG.recvline().strip().decode("utf-8")
