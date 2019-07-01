@@ -22,7 +22,7 @@ As the code says, all the values of primes `p1`, `p2`, `q1`, `q2` are very close
 
 #### Vulnerability: factors are too close!
 
-`n`'s bit length is 2047. There is a high chance that `c` differs less then `{4 * N}^{1 / 4}` from `sqrt{N}`, `n` can be factored by using [fermat factorization method](https://en.wikipedia.org/wiki/Fermat%27s_factorization_method). By factoring `n`, I got all the values of `p1 * p2`, `q1 * q2`, `p1 * q2`, `p2 * q1`. By calculating greatest common divisor with `p1 * p1` and `p1 * q2`, I can recover `p1`!. All the other factors can be recovered by using a similar manner. Now it is straigtforward. Calculate `phi` and `d` and get the flag. I get the flag:
+`n`'s bit length is 2047. There is a high chance that `c` differs less then `{4 * N}^{1 / 4}` from `sqrt{N}`, `n` can be factored by using [fermat factorization method](https://en.wikipedia.org/wiki/Fermat%27s_factorization_method). By factoring `n`, I got all the values of `p1 * q1`, `p1 * q2`, `p2 * q1`, `p2 * q2`. By calculating greatest common divisor with `p1 * q1` and `p1 * q2`, I can recover `p1`!. All the other factors can be recovered by using a similar manner. Now it is straigtforward. Calculate `phi` and `d` and get the flag. I get the flag:
 
 ```
 ISITDTU{C0ngratu1ati0ns_Attack_RSA_Multi_prim3!!!!}
