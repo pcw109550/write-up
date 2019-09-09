@@ -6,7 +6,7 @@
 
 #### Observations and getting the flag
 
-After observing the given [go script](golang_heights.go), I immediately realize the algorithm for generating `pub`. The flag is encrypted by [rabin cryptosytem](Note: put flag into AFFCTF{} format), so factoring the public key `pub` leads to decryption of the [flag](flag.txt).
+After observing the given [go script](golang_heights.go), I immediately realize the algorithm for generating `pub`. The flag is encrypted by [rabin cryptosytem](https://en.wikipedia.org/wiki/Rabin_cryptosystem), so factoring the public key `pub` leads to decryption of the [flag](flag.txt).
 
 The algorithm of generating public key `pub` is ported as the following python code.
 
