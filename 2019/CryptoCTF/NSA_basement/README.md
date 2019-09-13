@@ -8,7 +8,7 @@ Solved after the CTF was ended.
 
 #### Understanding the settings and factoring public key `n`
 
-15933 [RSA public keys](key) in PEM format and 15933 [encrypted flag](enc) was given. As the description says, all the plaintext must be the flag. If public modulus `n` is factored, we can decrypt and get the plaintext flag.
+15933 [RSA public keys](keys) in PEM format and 15933 [encrypted flag](enc) was given. As the description says, all the plaintext must be the flag. If public modulus `n` is factored, we can decrypt and get the plaintext flag.
 
 Bunch of RSA public keys were given, so I immediately calculated [gcd](https://en.wikipedia.org/wiki/Greatest_common_divisor) between different public modulus `n`. After calculating the gcd of public modulus `n` of file [pubkey_00000.pem](keys/pubkey_00000.pem) with other public keys, I got five `256` bit prime factors of `n`. `n` had bit length of `2048`, so all I need to do is to factor out the remaining `(2048 - 256 * 5) = 768` bits.
 
