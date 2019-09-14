@@ -12,7 +12,7 @@ Solved after the CTF was ended.
 
 Bunch of RSA public keys were given, so I immediately calculated [gcd](https://en.wikipedia.org/wiki/Greatest_common_divisor) between different public modulus `n`. After calculating the gcd of public modulus `n` of file [pubkey_00000.pem](keys/pubkey_00000.pem) with other public keys, I got five `256` bit prime factors of `n`. `n` had bit length of `2048`, so all I need to do is to factor out the remaining `(2048 - 256 * 5) = 768` bits.
 
-Luckily, the remaining `768` bit was prime! So I have completely factored out public modulus `n`. By calculating modular inverse over `phin`, I recoverd the private key `d`
+Luckily, the remaining `768` bit was prime! So I have completely factored out public modulus `n`. By calculating modular inverse over `phin`, I recoverd the private key `d`.
 
 #### Decryption by PKCS1_OAEP with multiprime settings
 
@@ -43,7 +43,7 @@ cipher = PKCS1_OAEP.new(key)
 flag = cipher.decrypt(enc)
 ```
 
-Thanks for the great implementation of Pycryptodome, I get the flag:
+Thanks for the great implementation by Pycryptodome, I get the flag:
 ```
 CCTF{RSA_w17H_bAl4nc3d_1nC0mple73_bl0ck__d35igN__BIBD____}
 ```
