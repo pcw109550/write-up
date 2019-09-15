@@ -55,7 +55,7 @@ I generalized the method of solving Pellian equation which was introduced [here]
 x_{n + 1} = a * x_{n} + b * D * y_{n}
 y_{n + 1} = b * x_{n} + a * y_{n}
 ```
-3. By knowing fundamental and the second solution, solve the equation to get the value of `a` and `b`. For example, `(x_{0}, y_{0}) = (1, 1)`, `(x_{1}, y_{1}) = (7, 5)` for constraint 1. `D = 2` in this case, so deriving the value of `a` and `b` is easy(solve linear equation `7 = a + 2 *b b`, `5 = a + b`). I get `a = 3`, `b = 2` for the first contraint.
+3. By knowing fundamental and the second solution, solve the equation to get the value of `a` and `b`. For example, `(x_{0}, y_{0}) = (1, 1)`, `(x_{1}, y_{1}) = (7, 5)` for constraint 1. `D = 2` in this case, so deriving the value of `a` and `b` is easy(solve linear equation `7 = a + 2 * b`, `5 = a + b`). I get `a = 3`, `b = 2` for the first contraint.
 4. Use the recurrence equation to generating infinitely many solutions.
 
 By generating solutions for the given equations, and using the leftover constraints, I could calculate the values of `u`, `v`, `x` and `y`. I get the flag:
