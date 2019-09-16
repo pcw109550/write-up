@@ -4,6 +4,13 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2019
 
+- **CSAW CTF Qualification Round 2019**
+	- Crypto 400 - Fault Box - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/CSAW/Fault_Box)
+		- Fault attack on RSA CRT with a slight twist.
+	- Crypto 300 - SuperCurve - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/CSAW/SuperCurve)
+		- Solving ECDLP when order is small.
+	- Crypto 100 - count on me - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/CSAW/count_on_me)
+		- Misdesigned block cipher leads to information leakage.
 - **Affinity CTF 2019 Quals**
 	- Crypto 500 - Epic Poem - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/Affinity/Epic_Poem)
 		- XOR encryption, guessing based on flag format.
