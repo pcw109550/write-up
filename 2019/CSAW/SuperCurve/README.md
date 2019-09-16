@@ -1,4 +1,4 @@
-# SuperCurves Writeup
+# SuperCurve Writeup
 
 ### CSAW Quals 2019 - crypto 300 - 171 solves
 
