@@ -6,9 +6,9 @@
 
 #### Analysis of given system
 
-`flag` and `fake_flag` is signed by textbook RSA. I have only two oracle to recover real flag since `cnt` variable is initially set to `2` and decremented after using the oracle. Luckily, we can use RSA encryption oracle without decreasing `cnt`.
+`flag` and `fake_flag` is signed by textbook RSA. I have only two oracles to recover real flag since `cnt` variable is initially set to `2` and decremented after using the oracle. Public modulus `n` will be newly updated after two trials. Luckily, we can use RSA encryption oracle without decreasing `cnt`.
 
-`enc_fake_flag()` method deliberately injects error while RSA signing, by XORing `fun` with intermediate values. I notice this is a classic [fault attack on RSA CRT](https://crypto.stackexchange.com/questions/63710/fault-attack-on-rsa-crt).
+`TEST_CRT_encrypt()` method deliberately injects error while RSA signing, by XORing `fun` with intermediate values. I notice this is a classic [fault attack on RSA CRT](https://crypto.stackexchange.com/questions/63710/fault-attack-on-rsa-crt).
 
 #### Steps for recovering information and getting the flag
 
