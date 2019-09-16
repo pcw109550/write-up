@@ -20,8 +20,8 @@ The length of the encryption result given by the server was `4900`, which means 
 
 To recover the flag, I deliberately chose the value of initial seed to satisfy the following conditions.
 
-1. `random_bytes()` method must generate identical results.
-2. Each random `16` byte chunks must encrypt different plaintext chunks, while one must include  the first chunk which the value is known.
+1. `random_bytes()` method must generate two identical random `16` byte blocks during 300 calls of it.
+2. Two random `16` byte chunks from 1. must encrypt different plaintext chunks, while one must include  the first chunk which the value is known.
 
 The upper conditions can be tested locally. I found the seed by implementing my function `findseed`. Let the two corresponding ciphertext chunks be `c1`, `c2` and plaintext chunks be `m1`,`m2`. Let `R` be the random `16` byte chunk which the value is same, by the first condition of the seed. I already know the value of `m1`(`"Encrypted Flag: "`) by the second condition of seed. I can recover `m2` by the following formula.
 
