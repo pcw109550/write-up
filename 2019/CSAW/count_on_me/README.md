@@ -8,7 +8,7 @@
 
 The encryption process is done by the following five steps.
 
-1. Initialize python random seed using my integer input(from `1` to `9999999999999999`.
+1. Initialize python random seed using my integer input(from `1` to `9999999999999999`).
 2. String `"Encrypted Flag: "` with the length of `16` bytes is concated front to the flag `m`.
 3. Data generated from 2. is cut into `16` byte chunks, padded with null byte.
 4. Random `16` bytes is generated and encrypted using AES, and the encryption result is xored wth each chunk.
