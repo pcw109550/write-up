@@ -18,7 +18,7 @@ The length of the encryption result given by the server was `4900`, which means 
 
 #### Choosing appropriate seed value and get the flag
 
-To recover the flag, I deliberately chose the value of initial seed. The seed must satisfy the following conditions.
+To recover the flag, I deliberately chose the value of initial seed to satisfy the following conditions.
 
 1. `random_bytes()` method must generate identical results.
 2. Each random `16` byte chunks must encrypt different plaintext chunks, while one must include  the first chunk which the value is known.
