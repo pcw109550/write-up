@@ -40,7 +40,7 @@ c2 - pow(fake_flag_cand, e) != k2 * p
 => c - pow(fake_flag_cand, e) = k * p
 ```
 
-Therefore, If I calculate gcd of `c - pow(fake_flag_cand, e, n)` and `n`, and its value is positive integer larger than `1`, the gcd will be the factor `p`. `fake_flag_cand` will be the real `fake_flag`. Get the value `c = fake_flag_fault_enc` by calling method `TEST_CRT_encrypt()`(`cnt` becomes `1`). The factor can be justified by calculating remainder of `n` divided by `p` to be `0`. The process can be implemented by the below python script.
+Therefore, If I calculate gcd of `c - pow(fake_flag_cand, e, n)` and `n`, and when its value is positive integer larger than `1`, then the gcd will be the factor `p`. `fake_flag_cand` will be the real `fake_flag`. Get the value `c = fake_flag_fault_enc` by calling method `TEST_CRT_encrypt()`(`cnt` becomes `1`). The factor can be justified by calculating remainder of `n` divided by `p` to be `0`. The process can be implemented by the below python script.
 
 ```python
 while True:
