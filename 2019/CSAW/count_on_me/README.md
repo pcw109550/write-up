@@ -12,7 +12,7 @@ The encryption process is done by the following five steps.
 2. String `"Encrypted Flag: "` with the length of `16` bytes is concated front to the flag `m`.
 3. Data generated from 2. is cut into `16` byte chunks, padded with null byte.
 4. Random `16` bytes is generated and encrypted using AES, and the encryption result is xored wth each chunk.
-5. Step 2 to 4 is done 100 times, and the encryption result is given.kc
+5. Step 2 to 4 is done 100 times, and the encryption result is given.
 
 The length of the encryption result given by the server was `4900`, which means the resulting padded data has the length of `48` bytes because `4900 = (48 + 1) * 100`, where `1` byte came from newline. Each random `16` bytes is created by `random_bytes()` method, so the function must be called `100 * (48 / 16) == 300` times.
 
