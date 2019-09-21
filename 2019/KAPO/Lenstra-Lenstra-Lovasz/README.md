@@ -14,7 +14,7 @@ Being inspired from [this great challenge](https://github.com/p4-team/ctf/tree/m
 
 #### Application of Coppersmith's attack to recover `dp`
 
-Designing appropriate monic polynomial is crucial for applying Coppersmith's attack. Let me first derive the polynomial. I first start with relation between `e` and `d`. There exists integer `k` which satisfies the following equation. Let `a` and `b` be the quotient and remainder of the result of `d` divided by `p - 1`. Of course, `b = dp`.
+Designing appropriate monic polynomial is crucial for applying Coppersmith's attack. Let me derive the polynomial `f(x)`. I first start with relation between `e` and `d`. There exists integer `k` which satisfies the following equation. Let `a` and `b` be the quotient and remainder of the result of `d` divided by `p - 1`. Of course, `b = dp`.
 
 ```python
 e * d == 1 (mod (p - 1) * (q - 1))
@@ -50,9 +50,9 @@ f(x) == 0 == (secret << unknownbits) + x + einv * (k_ - 1) (mod n)
 
 The value of `k_` can be varied from `1` to `e = 151`. Also I do not know the value of `bits` exactly. I assume `bits` is in `1019` to `1024` by observation(running the original challenge). Bruteforce by changing values of `k_` and `bits` and apply `small_roots()` method. Tweak parameters `beta` and `epsilon` for optimization. I set `epsilon = 1/32` for faster iteration and low precision. The whole process was implemented in `recover()` function.
 
-### Recovering `p` from `dp`
+#### Recovering `p` from `dp`
 
-While running the script, I noticed some several small roots for different `k_` and `bits`. I tried to recover `p` from candiate value of `dp`. Because `dp < p - 1`, `t < e` from equation `dp * e = t * (p - 1) + 1`. Try all possible values of `t`(possible since `e` is small) and derive `p`. If the algorithm(`factorize()` method) fails, this means I have an incorrect `dp`.
+While running the script, I noticed some several small roots for different `k_` and `bits`. I tried to recover `p` from candidate value of `dp`. Because `dp < p - 1`, `t < e` from equation `dp * e = t * (p - 1) + 1`. Try all possible values of `t`(possible since `e` is small) and derive `p`. If the algorithm(`factorize()` method) fails, this means I have an incorrect `dp`.
 
 When `k_ = 130` and `bits = 1023`, I could recover `dp` and `p`. Since factor of `n` is known, I simply decrypt ciphertext and get the flag:
 
