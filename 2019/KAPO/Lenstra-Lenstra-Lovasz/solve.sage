@@ -17,14 +17,14 @@ def recover(secret):
     F.<x> = PolynomialRing(Zmod(n))
     einv = inverse_mod(e, n)
     for bits in reversed(range(1019, 1025)):
-        # bits = 1023
-        knownbits = (bits // 2 - bits // 10)
+        bits = 1023
+        unknownbits = (bits // 2 - bits // 10)
         for k in range(1, e):
-            # k = 130
-            f = (secret << knownbits) + x + (k - 1) * einv
-            x0 = f.small_roots(X=2 ** (knownbits + 1), beta=0.44, epsilon=1/32)
+            k = 130
+            f = (secret << unknownbits) + x + (k - 1) * einv
+            x0 = f.small_roots(X=2 ** (unknownbits + 1), beta=0.44, epsilon=1/32)
             if len(x0) != 0:
-                dp = x0[0] + (secret << knownbits)
+                dp = x0[0] + (secret << unknownbits)
                 p_cand = factorize(e, Integer(dp))
                 if p_cand < 0:
                     continue
