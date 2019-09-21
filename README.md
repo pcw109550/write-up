@@ -8,7 +8,7 @@ CTF write-ups written by me. Mostly crypto!
 	- Crypto 1 - Lenstra-Lenstra-Lovasz - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/KAPO/Lenstra-Lenstra-Lovasz)
 		- Recover `dp` by using Coppersmith's attack, and recover `p`.
 	- Crypto 1 - Weak-Strong - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/KAPO/Weak-Strong)
-		- ROCA attack.s
+		- ROCA attack.
 - **CSAW CTF Qualification Round 2019**
 	- Crypto 400 - Fault Box - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/CSAW/Fault_Box)
 		- Fault attack on RSA CRT with a slight twist.
