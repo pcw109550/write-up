@@ -1,4 +1,4 @@
-# Lenstra-Lenstra-Lovász Writeup
+c# Lenstra-Lenstra-Lovász Writeup
 
 ### KAPO 2019 - crypto 1 - 2 solves
 
@@ -43,6 +43,8 @@ g(x) == 0 == e * ((secret << unknownbits) + x) + k_ - 1 (mod p)
 ```
 
 Let me make `g(x)` monic. Although sage has method `monic()` to do the job, I just muliplied `einv = inverse_mod(e, n)`. I finally get the polynomial `f(x)` for applying Coppersmith's attack.
+
+To elaborate, Let `p` be some factor of `n`, and `beta` be real between `0` and `1`, `p = n ** beta`. `f(x) == 0 (mod n)`. There exists a polynomial algorithm to calculate `small roots` of `f(x) == 0 (mod p)`. The word `small` indicates that the size of root is less than `(N ** (beta ** 2)) / d`, where `d` is the degree of `f(x)`. In our case, `p` and `q` have same bit length, so `beta = 1 / 2` and `d = 1`. Therefore I can look for roots over `(mod p = N ** beta)`. With this constraints, I can find the roots smaller than `N ** (1 / 4)`. Size of `x` is about `400` bits, and bit length of `N ** (1 / 4) = 512 > 400`, so finding root is possible!. The proof of the attack can be found [here](https://voidma.in/assets/2019/09/happy/lll_survey.pdf).
 
 ```python
 f(x) == 0 == (secret << unknownbits) + x + einv * (k_ - 1) (mod n)
