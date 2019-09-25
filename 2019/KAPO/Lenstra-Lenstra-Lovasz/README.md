@@ -1,4 +1,4 @@
-c# Lenstra-Lenstra-Lovász Writeup
+# Lenstra-Lenstra-Lovász Writeup
 
 ### KAPO 2019 - crypto 1 - 2 solves
 
