@@ -4,6 +4,11 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2019
 
+- **HITCON CTF 2019 Quals**
+	- Crypto 200 - Lost Modulus Again - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/HITCON/Lost_Modulus_Again)
+		- Recover `n` to decrypt the flag since `d` is given.
+	- Crypto 200 - Very Simple Haskell - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/HITCON/Very_Simple_Haskell)
+		- Decrypt Naccache-Stern Knapsack problem by directly knowing the private key.
 - **KAPO 2019**
 	- Crypto 1 - Lenstra-Lenstra-Lovasz - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/KAPO/Lenstra-Lenstra-Lovasz)
 		- Recover `dp` by using Coppersmith's attack, and recover `p`.
