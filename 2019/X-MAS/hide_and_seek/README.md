@@ -30,12 +30,12 @@ Let me observe the bit length of each term. `t_{i}` and `u_{i}` has size of `800
 
 ```python
 M = Matrix([
-	[  field,      0,      0,   ..  ,      0,      0,      0,      0], # k_{1}
+    [  field,      0,      0,   ..  ,      0,      0,      0,      0], # k_{1}
     [      0,  field,      0,   ..  ,      0,      0,      0,      0], # k_{2}
     [      0,      0,  field,   ..  ,      0,      0,      0,      0], # k_{3}
     [   :   ,   :   ,   :   ,       ,   :   ,   :   ,   :   ,   :   ], #  :
     [      0,      0,      0,      0,  field,      0,      0,      0], # k_{dim}
-	[  t_{1},  t_{2},  t_{3},   ..  ,t_{dim},B/field,      0,      C], # guess
+    [  t_{1},  t_{2},  t_{3},   ..  ,t_{dim},B/field,      0,      C], # guess
     [  u_{1},  u_{2},  u_{3},   ..  ,u_{dim},      0,      B,      0]  # 1
 #--->  b_{1}   b_{2}   b_{3}    ..   b_{dim} B*guess/field B
 ])
