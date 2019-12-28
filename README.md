@@ -4,6 +4,11 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2019
 
+- **Christmas CTF 2019**
+	- Crypto 1000 - hide and seek - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/X-MAS/hide_and_seek)
+		- Solving hidden number problem + Coppersmith's attack on partial `p` exposure on RSA.
+	- Crypto 995 - christmas pockets - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/X-MAS/christmas_pockets)
+		- Classical knapsack cryptosystem is vulnerable to low density attack.
 - **HITCON CTF 2019 Quals**
 	- Crypto 200 - Lost Modulus Again - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/HITCON/Lost_Modulus_Again)
 		- Recover `n` to decrypt the flag since `d` is given.
