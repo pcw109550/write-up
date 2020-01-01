@@ -24,7 +24,7 @@ Let `t_{i}`s be the random number generated, and `u_{i}`s be the output of metho
 
 `guess * t_{i} = u_{i} + b_{i} (mod field)`
 
-`guess * t_{i} = b_{i} + b_{i} + field * k_{i}`
+`guess * t_{i} = u_{i} + b_{i} + field * k_{i}`
 
 Let me observe the bit length of each term. `t_{i}` and `u_{i}` has size of `800` bit value, guess is `724`, and `b_{i}` is `761`. I will construct lattice `M` for cracking [DSA on biased nonce](https://eprint.iacr.org/2019/023.pdf), and add extra column(last column of `M`) for embedding the information of bit length of `guess`. Let `B = 2 ** 761`, `C = 2 ** 52`. `B` is the suppression term of `b_{i}`s, and `C` the suppression term for `guess`.
 
