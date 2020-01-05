@@ -2,6 +2,12 @@
 
 CTF write-ups written by me. Mostly crypto!
 
+## 2020
+
+- **WhiteHat Grand Pix 06 Quals**
+    - Crypto 200 - Cryptography 01 - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/WhiteHat_GrandPrix/Cryptography_01)
+        - Simple substitution cipher.
+
 ## 2019
 
 - **Christmas CTF 2019**
