@@ -1,6 +1,6 @@
 # Cryptography 01 Writeup
 
-### WhiteHat Grand Prix 06 Quals 2019 - crypto
+### WhiteHat Grand Prix 06 Quals 2020 - crypto 200
 
 #### Observations
 
