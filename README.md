@@ -4,7 +4,7 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
-- **HackTM CTF Quals 2020**
+- **nullcon HackIM 2020**
     - Crypto 419 - SecureLinearFunctionEvaluation - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/HackTM/SecureLinearFunctionEvaluation)
         - Break Bellare-Micali OT by simple math
 - **WhiteHat Grand Pix 06 Quals**
