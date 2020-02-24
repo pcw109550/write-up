@@ -10,12 +10,14 @@
 
 It is a traditional [oracle padding attack(OPA)](https://en.wikipedia.org/wiki/Padding_oracle_attack). To apply the attack,
 
+0. Obviously get ciphertext
+	- Given at the description of the challenge, encoded in base64
 1. Leak block size
 	- Can be found by sending various length of inputs and observing responses.
 	- `SIZE = 16`
 2. Leak initialization vector(`iv`)
 	- This was included in server response, encoded by base64.
-	- `iv = "This is an IV456"`
+	- `iv_default = "This is an IV456"`
 3. Confirm the [block mode of operation](https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation) is CBC.
 	- Checked by sending intentionally malformed `iv|ct` pairs.
 4. Check server response behavior is vulnerable for attack. Needed for information leakage.
