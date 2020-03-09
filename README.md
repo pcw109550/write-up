@@ -4,6 +4,15 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **zer0pts CTF 2020**
+	- Crypto 636 - dirty laundry - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/dirty_laundry)
+		- Paillier cryptosystem with Shamir's secret sharing. z3 and modular operation needed.
+	- Crypto 394 - diysig - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/diysig)
+		- RSA with LSB oracle.
+	- Crypto 260 - ROR - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/ROR)
+		- Concat LSB for gaining ciphertext
+	- Forensics 100 - Locked KitKat - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/Locked_KitKat)
+		- Bruteforce android pattern lock
 - **Pragyan CTF 2020**
     - Crypto 150 - AskTheOracle - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Pragyan/AskTheOracle)
         - Oracle Padding Attack.
