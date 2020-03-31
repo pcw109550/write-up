@@ -4,6 +4,19 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **TAMUctf 2020**
+	- Crypto 338 - ETERNAL_GAME - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/ETERNAL_GAME)
+		- Hash length extension attack.
+	- Web 262 - MENTALMATH - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/MENTALMATH)
+		- Ajax code injection.
+	- Web 122 - FILESTORAGE - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/FILESTORAGE)
+		- LFI + php session poisoning.
+	- Web 50 - PASSWORD_EXTRACTION - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/PASSWORD_EXTRACTION)
+		- Blind SQL injection.
+	- Misc 50 - INSTAGRAM - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/INSTAGRAM)
+		- JPEG marker recovery.
+	- Misc 50 - BLIND - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/BLIND)
+		- Reverse shell.
 - **zer0pts CTF 2020**
 	- Crypto 636 - dirty laundry - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/dirty_laundry)
 		- Paillier cryptosystem with Shamir's secret sharing. z3 and modular operation needed.
