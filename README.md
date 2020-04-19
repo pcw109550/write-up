@@ -6,9 +6,9 @@ CTF write-ups written by me. Mostly crypto!
 
 - **PlaidCTF 2020**
 	- Crypto 350 - MPKC - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/MPKC)
-		- Coppersmith's short pad attack + Franklin-Reiter related message attack.
-	- Crypto 250 - dyrpto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/dyrpto)
 		- Destroy multivariate quadratic polynomial based encyption scheme by linear algebra.
+	- Crypto 250 - dyrpto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/dyrpto)
+		- Coppersmith's short pad attack + Franklin-Reiter related message attack.
 - **TAMUctf 2020**
 	- Crypto 338 - ETERNAL_GAME - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/ETERNAL_GAME)
 		- Hash length extension attack.
