@@ -4,6 +4,11 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **PlaidCTF 2020**
+	- Crypto 350 - MPKC - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/MPKC)
+		- Coppersmith's short pad attack + Franklin-Reiter related message attack.
+	- Crypto 250 - dyrpto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/dyrpto)
+		- Destroy multivariate quadratic polynomial based encyption scheme by linear algebra.
 - **TAMUctf 2020**
 	- Crypto 338 - ETERNAL_GAME - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/TAMUctf/ETERNAL_GAME)
 		- Hash length extension attack.
@@ -19,7 +24,7 @@ CTF write-ups written by me. Mostly crypto!
 		- Reverse shell.
 - **zer0pts CTF 2020**
 	- Crypto 636 - dirty laundry - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/dirty_laundry)
-		- Paillier cryptosystem with Shamir's secret sharing. z3 and modular operation needed.
+		- Paillier cryptosystem with Shamir's secret sharing.
 	- Crypto 394 - diysig - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/diysig)
 		- RSA with LSB oracle.
 	- Crypto 260 - ROR - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/zer0pts/ROR)
