@@ -4,6 +4,12 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+
+- **DEF CON CTF Qualifier 2020**
+	- Crypto 130 - coooppersmith - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/DEFCON/coooppersmith)
+		- Factor `n` using bivariate coppersmith with leaked info.
+	- Reversing 120 - ooobash - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/DEFCON/ooobash)
+		- Bash shell reversing.
 - **PlaidCTF 2020**
 	- Crypto 350 - MPKC - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/PlaidCTF/MPKC)
 		- Destroy multivariate quadratic polynomial based encyption scheme by linear algebra.
