@@ -85,13 +85,14 @@ class RandomWrapper():
     def Random(self):
         return self.Random()
 
+delta = 0
 r = RandomWrapper(delta)
 s = r.Random()
 t = r.Random()
 ans = (s + t) & 0xffffffff
 ```
 
-Now we have encrypted flag `c` and `prime`. To factor `n = (2 * prime * x0 + 1) * (2 * prime * y0 + 1) `, I have to find out `x0` and `y0`. [Bivariate coppersmith](http://www.jscoron.fr/publications/bivariate.pdf) may solve the equation.
+Now we have `c` and `prime`. To factor `n = (2 * prime * x0 + 1) * (2 * prime * y0 + 1) `, I have to find out `x0` and `y0`. [Bivariate coppersmith](http://www.jscoron.fr/publications/bivariate.pdf) may solve the equation.
 
 By using this [great implementation](https://github.com/ubuntor/coppersmith-algorithm) of Coron's reformulation of Coppersmith's algorithm for finding small integer roots of bivariate polynomial over `n`, I recovered `x0` and `y0`. Below is the polynomial constructed for applicating coppersmith.
 
