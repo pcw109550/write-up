@@ -4,7 +4,11 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
-
+- **Pwn2Win CTF 2020**
+	- Crypto 246 - Omni Crypto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Pwn2Win/Omni_Crypto)
+		- Coppersmith's attack on partial `p` exposure on RSA.
+	- Crypto 115 - Androids Encryption - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Pwn2Win/Androids_Encryption)
+		- Leak AES key on PCBC.
 - **DEF CON CTF Qualifier 2020**
 	- Crypto 130 - coooppersmith - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/DEFCON/coooppersmith)
 		- Factor `n` using bivariate coppersmith with leaked info.
