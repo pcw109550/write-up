@@ -64,26 +64,6 @@ class Solver:
             self.Maps[i] = recvMap()
         self.numRound += 1
 
-    """
-    def command(self, cmd=''):
-        self.roundUpdate()
-        # q: focus up(3 -> 2, 2 -> 1, 1 -> 0, 0 -> 3)
-        # e: focus dn(0 -> 1, 1 -> 2, 2 -> 3, 3- > 0)
-        # wasd: trivial
-        direction = {'w':'up', 'a':'left', 's':'down', 'd':'right'}
-        if cmd == '':
-            return
-        for c in cmd:
-            assert c in 'qewasd'
-
-        #p.sendline(cmd)
-
-        cmd = cmd.replace('q','').replace('e','')
-        if len(cmd) == 1:
-            pwn.log.info('Task {}: Move {}'.format(self.focus, direction[cmd]))
-        else:
-            pwn.log.info('Multiple Moves: {}'.format(cmd))
-    """
 
 def findPos(Map):
     bullet = []
@@ -212,7 +192,7 @@ def decide(focus, swap=False):
         print(f'playerNextPos: {playerNextPos}')
         current = bulletCurrentPos if swap else bulletNextPos
 
-        if playerNextPos in current:# or playerNextPos in bulletCurrentPos: # At most 1
+        if playerNextPos in current:
             pwn.log.info('####################################')
             pwn.log.info(f'# Collision will occur at game {i} #')
             pwn.log.info('####################################')
@@ -256,8 +236,8 @@ solver = Solver(GAMENUM)
 bulletLists = [[] for _ in range(GAMENUM)]
 playerLists = [None for _ in range(GAMENUM)]
 playerPrevPos = [None for _ in range(GAMENUM)]
-# c = solver.command
 r = solver.roundUpdate
+
 # first two rounds are free(no bullets are spawned!).
 # Use this to track players: playerLists/playerPos1/playerPos2
 # or just initialize it :C

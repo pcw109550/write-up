@@ -12,13 +12,14 @@ bar = '   -----------------------------------------------------------------\n'
 p.sendlineafter(header, 'p1')
 
 
-def readMap():
+def readMap(done=False):
     Map = []
     for _ in range(16):
         p.recvuntil(bar)
         row = p.recvline(keepends=False).split(' | ')[-16:]
         row[-1] = row[-1].rstrip('|')
-        row = [int(x.strip()) if len(x.strip()) != 0 else -1 for x in row]
+        if not done:
+            row = [int(x.strip()) if len(x.strip()) != 0 else -1 for x in row]
         Map.append(row)
     assert len(Map) == 16 and len(Map[0]) == 16
     return Map
@@ -30,6 +31,7 @@ def printMap(Map):
         print(bar[:-1])
         print(' ' + str(i + 1) + ' | ' + ' | '.join([str(x) if x != -1 else '?' for x in row]) + ' |')
     print(bar[:-1])
+
 
 def decide(Map, UpdatedMap):
     coord = None
@@ -49,16 +51,12 @@ def decide(Map, UpdatedMap):
     return '{:s}{:d}'.format(chr(ord('a') + x), y + 1)
 
 
-
 Map = readMap()
-#printMap(Map)
 UpdatedMap = mines_main(16, 16, minesleft, Map)
-#printMap(UpdatedMap)
 result = decide(Map, UpdatedMap)
 pwn.log.info('result: {}'.format(result))
 p.sendline(result)
 
-done = False
 for i in range(200):
     pwn.log.info('Mines left: {}'.format(minesleft))
 
@@ -75,9 +73,7 @@ for i in range(200):
     if empty == minesleft:
         break
     else:
-        #printMap(Map)
         UpdatedMap = mines_main(16, 16, minesleft, Map)
-        #printMap(UpdatedMap)
         result = decide(Map, UpdatedMap)
         if result == None:
             break
@@ -85,7 +81,6 @@ for i in range(200):
 
     p.sendline(result)
 
-print('wwwwwwwwwwwwwwwwwwww')
 cnt = 0
 end = None
 for y in range(16): #height
@@ -102,20 +97,9 @@ printMap(Map)
 y, x = end
 p.sendline('{:s}{:d}f'.format(chr(ord('a') + x), y + 1))
 
-def readMapdone():
-    Map = []
-    for _ in range(16):
-        p.recvuntil(bar)
-        row = p.recvline(keepends=False).split(' | ')[-16:]
-        row[-1] = row[-1].rstrip('|')
-        Map.append(row)
-
-    assert len(Map) == 16 and len(Map[0]) == 16
-    return Map
-
 for _ in range(39):
     p.recvuntil('left): ')
-    Map = readMapdone()
+    Map = readMap(True)
 
     for y in range(16): #height
         for x in range(16): #width
@@ -126,6 +110,5 @@ for _ in range(39):
     p.sendline('{:s}{:d}f'.format(chr(ord('a') + x), y + 1))
 
 flag = 'Defenit{min35w33p3r_i5_ezpz}'
-
 
 p.interactive()

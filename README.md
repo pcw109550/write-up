@@ -4,6 +4,15 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **Defenit CTF 2020**
+	- Crypto 201 - Double Message - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Defenit/Double_Message)
+		- Coppersmith's short pad attack + Franklin-Reiter related message attack.
+	- Misc 906 - Dodge - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Defenit/Dodge)
+		- Automated [dodge](https://editown.tistory.com/101) solver.
+	- Misc 298 - Minesweeper - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Defenit/Minesweeper)
+		- Automated minesweeper solver.
+	- Misc 181 - QR Generator - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Defenit/QR_Generator)
+		- QRCode repl.
 - **Pwn2Win CTF 2020**
 	- Crypto 246 - Omni Crypto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Pwn2Win/Omni_Crypto)
 		- Coppersmith's attack on partial `p` exposure on RSA.

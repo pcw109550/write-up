@@ -1,20 +1,22 @@
-#!/usr/bin/env python3
-import pwn
-import cv2
-import zxing
-from PIL import Image
-from itertools import product
+# QR Generator Writeup
 
-pwn.context.log_level = 'DEBUG'
+### Defenit CTF 2020 - Misc 181 - 82 solves
 
-IP, PORT = 'qr-generator.ctf.defenit.kr', 9000
-p = pwn.remote(IP, PORT)
+> Escape from QR devil! `nc qr-generator.ctf.defenit.kr 9000`
 
-name = 'pcw109550'
-p.sendlineafter('What is your Hero\'s name? ', name)
-p.recvline(f'Thank you so much *{name}* please escape from the QR devil')
-decoder = zxing.BarCodeReader()
+#### Observation
 
+Straightforward task. Let me read QRCode with varying size 100 times.
+
+#### Exploit
+
+Iterate below steps 100 times.
+
+1. Parse input and save QRCode as png using [PIL](https://pillow.readthedocs.io/en/stable/).
+2. Use [zxing](https://pypi.org/project/zxing/) python module for read QRCode data.
+3. Send result to server.
+
+```python
 for _ in range(100):
     p.recvuntil('< QR >\n')
     mat = []
@@ -41,10 +43,19 @@ for _ in range(100):
     for indX, indY in product(range(width * scale), repeat=2):
         pos = indX + margin, indY + margin
         outpx[pos] = mat[indY // scale][indX // scale] == 0
+    
+    # Save QR
     out.save('out.png')
+    # Read QR
     rs = decoder.decode('out.png')
+    # Send result
     p.sendline(rs.raw)
+```
 
-flag = 'Defenit{QQu!_3sC4p3_FR0m_D3v1l!_n1c3_C0gN1z3!}'
+Get flag: 
 
-p.interactive()
+```
+Defenit{QQu!_3sC4p3_FR0m_D3v1l!_n1c3_C0gN1z3!}
+```
+
+Exploit code: [solve.py](solve.py)
