@@ -29,7 +29,7 @@ diff = roots[0]
 Difference of plaintexts(`diff`) is known. Apply [Franklin-Reiter related message attack](http://en.wikipedia.org/wiki/Coppersmith%27s_Attack#Franklin-Reiter_Related_Message_Attack) and get flag: 
 
 ```
-Defenit{QQu!_3sC4p3_FR0m_D3v1l!_n1c3_C0gN1z3!}
+Defenit{Oh_C@Pp3r_SM1TH_SH0Rt_P4D_4TT4CK!!_Th1S_I5_Ve12Y_F4M0US3_D0_Y0u_UnderSt4Nd_ab@ut_LLL_AlgoriTHM?}
 ```
 
 Original problem: [double.sage](double.sage), [out.txt](out.txt)
