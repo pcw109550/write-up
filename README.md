@@ -4,6 +4,21 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **Crypto CTF 2020**
+	- Crypto 316 - Fatima - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Fatima)
+		- Solve tiny ECDLP and write inverse functions.
+	- Crypto 285 - Complex to Hell - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Complex_to_Hell)
+		- Brute key matrix using flag oracle.
+	- Crypto 142 - One Line Crypto - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/One_Line_Crypto)
+		- Weak prime generation logic for textbook RSA.
+	- Crypto 95 - Gambler - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Gambler)
+		- Solve cubic equation over polynomial ring.
+	- Crypto 90 - Three Ravens - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Three_Ravens)
+		- Small message with single factor leak.
+	- Crypto 55 - Amsterdam - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Amsterdam)
+		- Binomial coefficient based encoding.
+	- Crypto 29 - Trailing Bits - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Trailing_Bits)
+		- Trucated plaintext.
 - **Defenit CTF 2020**
 	- Crypto 201 - Double Message - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/Defenit/Double_Message)
 		- Coppersmith's short pad attack + Franklin-Reiter related message attack.
