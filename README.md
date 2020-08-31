@@ -138,3 +138,11 @@ CTF write-ups written by me. Mostly crypto!
 		- Hill cipher with randomness and padding.
 	- Crypto 200 - Show me your private key - [Writeup](https://github.com/pcw109550/write-up/tree/master/2019/Harekaze/show_me_your_private_key)
 		- Order of elliptic curve defined over `Zmod(n)`, where `n` is composite.
+
+## 2018
+
+- **KAPO 2018**
+	- Reversing 50 - hdbt - [Writeup](https://github.com/pcw109550/write-up/tree/master/2018/KAPO/hdbt)
+		- Calculating inverse over finite field.
+	- Reversing 50 - ezbt - [Writeup](https://github.com/pcw109550/write-up/tree/master/2018/KAPO/ezbt)
+		- Consecutive XOR for inversion.
