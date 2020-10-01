@@ -25,7 +25,7 @@ n = len(keys)
 d = n / log(max(keys), 2)
 assert CDF(d) < 0.9408
 
-M = Matrix.identity(n) * 2
+M = Matrix.identity(n)
 
 last_row = [128 for x in keys]
 M_last_row = Matrix(ZZ, 1, len(last_row), last_row)
@@ -43,7 +43,7 @@ result = []
 
 for x in target:
     if x != 128:
-        result.append((128 - x) // 2)
+        result.append(128 - x)
     else:
         result.append(0)
 

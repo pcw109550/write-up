@@ -4,6 +4,13 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2020
 
+- **KAPO 2020**
+	- Crypto 100 - fixed point revenge - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/KAPO/fixed_point_revenge)
+		- Affine structure of crc.
+	- Crypto 100 - Baby Bubmi - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/KAPO/Baby_Bubmi)
+		- Extension of knapsack cipher.
+	- Crypto 100 - Child Beubmi - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/KAPO/Child_Beubmi)
+		- Coppersmith attack on multiprime RSA.
 - **Crypto CTF 2020**
 	- Crypto 316 - Fatima - [Writeup](https://github.com/pcw109550/write-up/tree/master/2020/CryptoCTF/Fatima)
 		- Solve tiny ECDLP and write inverse functions.
