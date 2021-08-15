@@ -1,0 +1,1 @@
+FLAG = "CCTF{7HrE3_b4Bie5_c4rRi3d_dUr1nG_0Ne_pr39naNcY_Ar3_triplets}"
