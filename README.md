@@ -2,6 +2,13 @@
 
 CTF write-ups written by me. Mostly crypto!
 
+## 2021
+- **InCTF 2021**
+	- Crypto 925 - Trouble With Pairs - [Writeup](https://github.com/pcw109550/write-up/tree/master/2021/InCTF/Trouble_With_Pairs)
+		- BLS Signature Forgery.
+	- Reversing 100 - find_plut0 - [Writeup](https://github.com/pcw109550/write-up/tree/master/2021/InCTF/find_plut0)
+		- Simple reversing using z3.
+
 ## 2020
 
 - **KAPO 2020**
