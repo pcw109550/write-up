@@ -2,6 +2,12 @@
 
 CTF write-ups written by me. Mostly crypto!
 
+## 2022
+
+- **zer0pts CTF 2022**
+	- Crypto 304 - Karen - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/zer0pts/Karen)
+		- Solving Hidden Subset Sum Problem with Nguyen-Stern algorithm.
+
 ## 2021
 
 - **POC Cutting Edge CTF 2021**
