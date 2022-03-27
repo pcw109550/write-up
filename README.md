@@ -4,6 +4,9 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2022
 
+- **LINE CTF 2022**
+	- Crypto 138 - Baby crypto revisited - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/LINE/Baby_crypto_revisited)
+		- Reduction to ECDSA biased nonce atack.
 - **zer0pts CTF 2022**
 	- Crypto 304 - Karen - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/zer0pts/Karen)
 		- Solving Hidden Subset Sum Problem with Nguyen-Stern algorithm.
