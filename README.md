@@ -4,6 +4,9 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2022
 
+- **Plaid CTF 2022**
+	- Crypto 400 - choreography - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/PlaidCTF/choreography)
+		- Complementation Slide + Twisted Slide Attack on generalized Feistel Structure.
 - **LINE CTF 2022**
 	- Crypto 138 - Baby crypto revisited - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/LINE/Baby_crypto_revisited)
 		- Reduction to ECDSA biased nonce atack.
