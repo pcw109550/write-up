@@ -4,6 +4,9 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2022
 
+- **angstromCTF 2022** 
+	- Crypto 110 - logloglog - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/angstromCTF/logloglog)
+		- Pohlig Hellman Algorithm for groups of prime-power order.
 - **Plaid CTF 2022**
 	- Crypto 400 - choreography - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/PlaidCTF/choreography)
 		- Complementation Slide + Twisted Slide Attack on generalized Feistel Structure.
