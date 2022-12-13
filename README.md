@@ -4,6 +4,11 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2022
 
+- **RCTF 2022**
+	- Crypto 769 - S2DH - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/RCTF/S2DH)
+		- Cracking SIDH using Castryck-Decru Attack
+	- Crypto 645 - IS_THIS_LCG? - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/RCTF/IS_THIS_LCG)
+		- Truncated LCG + EC-LCG with only 7 x-coordinate + Matrix LCG
 - **LakeCTF 2022** 
 	- Crypto 416 - NeutronMail - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/Lake/NeutronMail)
 		- Decrypting PGP message with not so random public PGP keys, factoring with gcd.
