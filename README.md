@@ -4,6 +4,9 @@ CTF write-ups written by me. Mostly crypto!
 
 ## 2022
 
+- **CODEGATE 2022 Final**
+	- Blockchain 500 - Look It Up - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/CODEGATE/Final/Look_It_Up) in Korean
+		- Plonkup + frozen heart vulnerability + Solidity Optimizer Keccak Caching Bug
 - **RCTF 2022**
 	- Crypto 769 - S2DH - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/RCTF/S2DH)
 		- Cracking SIDH using Castryck-Decru Attack
