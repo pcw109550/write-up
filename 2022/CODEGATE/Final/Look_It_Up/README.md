@@ -1,10 +1,33 @@
 # 해킹방어대회(CTF) 후기 - CODEGATE 2022 본선 Blockchain Challenge `Look It Up` 문제 풀이
 
-> Aimed to be submitted to KAIST Orakle Blockchain Academy
+>  Submitted to KAIST Orakle Blockchain Academy
 
 안녕하세요. 2022년 11월 7일~8일 개최된 CODEGATE 2022 국제해킹방어대회(CTF)에서 KAIST GoN 팀으로 대학생부 [우승](https://cs.kaist.ac.kr/board/view?bbs_id=news&bbs_sn=10476&page=1&skey=subject&svalue=&menu=83)을 하였습니다. 우리 팀은 저 포함 4인 팀으로 구성되었으며, 저는 본선 중 블록체인 및 암호학 관련 문제들을 풀어 우승에 기여하였습니다. 
 
 이 글에서는 CTF에 대한 소개 및, 본선에 출제된 블록체인 문제(문제명: `Look It Up`)에 대한 풀이 및 이를 이해하기 위한 배경지식을 다루고자 합니다. 이 글이 블록체인 보안을 이해하는 데 있어 즐거운 출발점이 되었으면 좋겠습니다.
+
+`Look It Up` 문제에 대한 풀이로 바로 넘어가고 싶다면 [여기로](#codegate-2022-본선-blockchain-challenge-look-it-up-같이-풀어보기) 바로 넘어가면 됩니다.
+
+## 목차 
+
+  * [CTF란?](#ctf란)
+  * [CTF 문제 맛보기](#ctf-문제-맛보기)
+  * [CODEGATE 2022 본선 Blockchain Challenge `Look It Up` 같이 풀어보기](#codegate-2022-본선-blockchain-challenge-look-it-up-같이-풀어보기)
+    + [문제 만져보기](#문제-만져보기)
+    + [`sanity_check` 분석](#sanity_check-분석)
+    + [`final_check` 분석](#final_check-분석)
+    + [`challenge1` 통과하기](#challenge1-통과하기)
+    + [`challenge2` 통과하기](#challenge2-통과하기)
+      - [유한체 위에서의 다항식 인수분해의 유일성](#유한체-위에서의-다항식-인수분해의-유일성)
+      - [EVM Assembly 분석](#evm-assembly-분석)
+      - [Transaction Calldata Layout](#transaction-calldata-layout)
+      - [Calldata offset 조작을 통한 `beta`와 `gamma` 고정하기](#calldata-offset-조작을-통한-beta와-gamma-고정하기)
+    + [`challenge3` 통과하기](#challenge3-통과하기)
+      - [EVM Assembly 분석](#evm-assembly-분석-1)
+      - [Solidity Optimizer Keccak Caching Bug: `beta == gamma` 확인하기](#solidity-optimizer-keccak-caching-bug-beta--gamma-확인하기)
+    + [대망의 `flag` 얻기](#대망의-flag-얻기)
+    + [Wrap Up](#wrap-up)
+    + [Exploit Artifacts](#exploit-artifacts)
 
 ## CTF란?
 
@@ -14,7 +37,7 @@ CTF는 정보보안 전문가부터 뉴비까지 참여하여, 우리들의 실�
 
 CTF는 보통 대학교나 회사, 국가 기관이 개최하며, 개인이 대회를 여는 경우도 있습니다. 뉴비를 위한 CTF부터, 정보보안 고인물을 위한 CTF까지, 난이도가 매우 다양합니다. 제가 참여한 [CODEGATE CTF](http://codegate.org/sub/introduce)는 과학기술정보통신부가 주최한, 2008년부터 개최된 유명한 대회입니다. 
 
-그렇다면 CTF 문제를 푼다라는 것은 어떤 의미이며, 채점은 어떻게 이루어지는지 알아봅시다. 문제들은, 출제자가 의도적으로 취약점을 넣어서 작성한 프로그램 혹은 데이터로 이루어집니다. 문제 풀이자는, 취약점을 발견하여 허락되지 않은 데이터를 읽거나, 프로그램을 의도하지 않은 상태로 조종합니다. 그 증거로 `flag`를 찾습니다. 여기서 통상적으로 `flag`란, alphanumeric하면서 너무 길지 않은 문자열입니다. 가령, `flag{yay_here_is_your_secret}`가 예시가 되겠습니다. 문제 풀이자는 `flag`를 출제자의 server에 제출하여, 점수를 얻게 됩니다. 보통은 쉬운 문제 일수록 많이 풀리게 되고, 점수가 떨어지는 Dynamic scoring 방식입니다. 대회 시간동안 얻어낸 점수의 총합이 가장 큰 팀이 우승하게 됩니다. 아래는 실제 대회 Scoreboard입니다.
+그렇다면 CTF 문제를 푼다라는 것은 어떤 의미이며, 채점은 어떻게 이루어지는지 알아봅시다. 문제들은, 출제자가 의도적으로 취약점을 넣어서 작성한 프로그램 혹은 데이터로 이루어집니다. 문제 풀이자는, 취약점을 발견하여 허락되지 않은 데이터를 읽거나, 프로그램을 의도하지 않은 상태로 조종합니다. 그 증거로 `flag`를 찾습니다. 여기서 통상적으로 `flag`란, alphanumeric하면서 너무 길지 않은 문자열입니다. 가령, `flag{yay_here_is_your_secret}`가 예시가 되겠습니다. 문제 풀이자는 `flag`를 출제자의 server에 제출하여, 점수를 얻게 됩니다. 보통은 쉬운 문제 일수록 많이 풀리게 되고, 배정된 점수가 낮아지는 Dynamic scoring 방식입니다. 대회 시간동안 얻어낸 점수의 총합이 가장 큰 팀이 우승하게 됩니다. 아래는 실제 대회 Scoreboard입니다.
 
 <p align="center">
     <img src="./codegate22f_scoreboard.jpg" alt="scoreboard" width="200" />
@@ -745,7 +768,7 @@ ticket please: kaistgonbestteam
 codegate2022{1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_50_ju57_k33p_y0ur_h34r75_w4rm!_4l50_50l1d17y_0.8.3_15_h3r3_70_54v3_u5!}
 ```
 
-저 긴 string이 `flag`입니다. 문제의 난이도에 걸맞게 플래그도 다량의 정보량을 함유하고 있습니다. 참고로 비슷하게 생긴 숫자와 알파벳을 섞어서 단어를 사용하는 것을 [Leetspeak](https://en.wikipedia.org/wiki/Leet)이라고 합니다. `flag`의 내용을 보아하니, 다음 사실을 배울 수 있었습니다.
+저 긴 string이 `flag`입니다. 문제의 난이도에 걸맞게 `flag`도 다량의 정보량을 함유하고 있습니다. 참고로 비슷하게 생긴 숫자와 알파벳을 섞어서 단어를 사용하는 것을 [Leetspeak](https://en.wikipedia.org/wiki/Leet)이라고 합니다. `flag`의 내용을 보아하니, 다음 사실을 배울 수 있었습니다.
 
 1. 제시된 $GF(p)$위의 다항식은 zero knowledge [plonkup](https://eprint.iacr.org/2022/086.pdf)와 관련이 있습니다. IACR eprint 번호가 `2022/086` 입니다.
 - `1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_`
@@ -753,6 +776,8 @@ codegate2022{1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_5
 - `50_ju57_k33p_y0ur_h34r75_w4rm!_`
 3. `challenge3`에서 사용된 solidity 버그는 `0.8.3` 버전에서 패치되었습니다.
 - `4l50_50l1d17y_0.8.3_15_h3r3_70_54v3_u5!`
+
+`flag`를 해석하니 문제 풀이에 대한 세줄 요약임을 깨달을 수 있었습니다.
 
 ### Wrap Up
 
@@ -762,6 +787,6 @@ codegate2022{1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_5
 
 ### Exploit Artifacts
 
-최종 공격 코드는 [solve.py](solve.py)에 작성하였습니다. [requirements.txt](requirements.txt)가 의존성입니다. 각 `challenge1`, `challenge2`, `challenge3` 메소드가 문제의 각 단계를 풀이합니다. 실제 공격을 수행하려면, 앞서 언급하였듯이 인프라를 구축하여 로컬에 ethereum 클라이언트를 구동시킨 후, 문제를 배포하여야 합니다.
+최종 공격 코드는 [solve.py](solve.py)에 작성하였습니다. [requirements.txt](requirements.txt)가 의존성입니다. 각 `challenge1`, `challenge2`, `challenge3` 메소드가 문제의 각 단계를 풀이합니다. 실제 공격을 수행하려면, 앞서 언급하였듯이 인프라를 구축하여 ethereum 클라이언트를 구동시킨 후, 문제를 배포하여야 합니다.
 
 문제 배포 파일: [Challenge.sol](Challenge.sol), [Setup.sol](Setup.sol)
