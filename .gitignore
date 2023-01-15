@@ -1,3 +1,4 @@
 *.pyc
 *.sage.py
 tempCodeRunnerFile.*
+venv
