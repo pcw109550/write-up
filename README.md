@@ -1,6 +1,6 @@
 # CTF write-ups
 
-CTF write-ups written by me. Mostly crypto!
+CTF write-ups written by me. Mostly crypto and blockchain!
 
 ## 2022
 
