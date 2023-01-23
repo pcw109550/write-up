@@ -15,6 +15,10 @@ CTF write-ups written by me. Mostly crypto and blockchain!
 - **LakeCTF 2022** 
 	- Crypto 416 - NeutronMail - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/Lake/NeutronMail)
 		- Decrypting PGP message with not so random public PGP keys, factoring with gcd.
+	- Blockchain 372 - Immutable - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/Lake/Immutable)
+		- Update code of a deployed contract using `CREATE`, `CREATE2`, and `SELFDESTRUCT`
+	- Blockchain 388 - QuinEVM - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/Lake/QuinEVM)
+		- Shortest EVM quine 
 - **angstromCTF 2022** 
 	- Crypto 110 - logloglog - [Writeup](https://github.com/pcw109550/write-up/tree/master/2022/angstromCTF/logloglog)
 		- Pohlig Hellman Algorithm for groups of prime-power order.
