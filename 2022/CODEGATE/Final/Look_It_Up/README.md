@@ -1,51 +1,51 @@
-# 해킹방어대회(CTF) 후기 - CODEGATE 2022 본선 Blockchain Challenge `Look It Up` 문제 풀이
+# Capture The Flag - CODEGATE 2022 Finals Blockchain Challenge `Look It Up` Writeup
 
 >  Submitted to KAIST Orakle Blockchain Academy
 
-안녕하세요. 2022년 11월 7일~8일 개최된 CODEGATE 2022 국제해킹방어대회(CTF)에서 KAIST GoN 팀으로 대학생부 [우승](https://cs.kaist.ac.kr/board/view?bbs_id=news&bbs_sn=10476&page=1&skey=subject&svalue=&menu=83)을 하였습니다. 우리 팀은 저 포함 4인 팀으로 구성되었으며, 저는 본선 중 블록체인 및 암호학 관련 문제들을 풀어 우승에 기여하였습니다. 
+Hi. The KAIST GoN team [won](https://cs.kaist.ac.kr/board/view?bbs_id=news&bbs_sn=10476&page=1&skey=subject&svalue=&menu=83) the CODEGATE 2022 international hacking defense competition (CTF) held on November 7th and 8th, 2022. Our team consisted of a team of 4 including me, and I contributed by solving problems related to blockchain and cryptography during the finals.
 
-이 글에서는 CTF에 대한 소개 및, 본선에 출제된 블록체인 문제(문제명: `Look It Up`)에 대한 풀이 및 이를 이해하기 위한 배경지식을 다루고자 합니다. 이 글이 블록체인 보안을 이해하는 데 있어 즐거운 출발점이 되었으면 좋겠습니다.
+In this article, I would like to introduce CTF, solve the blockchain problem (problem name: `Look It Up`) that was presented in the finals, and deal with the background knowledge to understand it. I hope this article is a pleasant starting point for understanding blockchain security.
 
-`Look It Up` 문제에 대한 풀이로 바로 넘어가고 싶다면 [여기로](#codegate-2022-본선-blockchain-challenge-look-it-up-같이-풀어보기) 바로 넘어가면 됩니다.
+If you want to directly go to solutions for `Look It Up` challenge, jump [here](#codegate-2022-final-blockchain-challenge-look-it-up-walkthrough).
 
-## 목차 
+## Index
 
-  * [CTF란?](#ctf란)
-  * [CTF 문제 맛보기](#ctf-문제-맛보기)
-  * [CODEGATE 2022 본선 Blockchain Challenge `Look It Up` 같이 풀어보기](#codegate-2022-본선-blockchain-challenge-look-it-up-같이-풀어보기)
-    + [문제 만져보기](#문제-만져보기)
-    + [`sanity_check` 분석](#sanity_check-분석)
-    + [`final_check` 분석](#final_check-분석)
-    + [`challenge1` 통과하기](#challenge1-통과하기)
-    + [`challenge2` 통과하기](#challenge2-통과하기)
-      - [유한체 위에서의 다항식 인수분해의 유일성](#유한체-위에서의-다항식-인수분해의-유일성)
-      - [EVM Assembly 분석](#evm-assembly-분석)
+  * [WTF is CTF?](#wtf-is-ctf)
+  * [A taste of the CTF problem](#a-taste-of-the-ctf-problem)
+  * [CODEGATE 2022 Final Blockchain Challenge `Look It Up` Walkthrough](#codegate-2022-final-blockchain-challenge-look-it-up-walkthrough)
+    + [Recon](#recon)
+    + [`sanity_check` Analysis](#sanity_check-analysis)
+    + [`final_check` Analysis](#final_check-analysis)
+    + [Passing `challenge1`](#passing-challenge1)
+    + [Passing `challenge2`](#passing-challenge2)
+      - [Uniqueness of polynomial factorization on a finite field](#uniqueness-of-polynomial-factorization-on-a-finite-field)
+      - [EVM Assembly Analysis](#evm-assembly-analysis)
       - [Transaction Calldata Layout](#transaction-calldata-layout)
-      - [Calldata offset 조작을 통한 `beta`와 `gamma` 고정하기](#calldata-offset-조작을-통한-beta와-gamma-고정하기)
-    + [`challenge3` 통과하기](#challenge3-통과하기)
-      - [EVM Assembly 분석](#evm-assembly-분석-1)
-      - [Solidity Optimizer Keccak Caching Bug: `beta == gamma` 확인하기](#solidity-optimizer-keccak-caching-bug-beta--gamma-확인하기)
-    + [대망의 `flag` 얻기](#대망의-flag-얻기)
+      - [Calldata Offset Manipulation to Fix `beta` and `gamma`](#calldata-offset-manipulation-to-fix-beta-and-gamma)
+    + [Passing `challenge3`](#passing-challenge3)
+      - [EVM Assembly Analysis](#evm-assembly-analysis-1)
+      - [Solidity Optimizer Keccak Caching Bug: Confirm `beta == gamma`](#solidity-optimizer-keccak-caching-bug-confirm-beta--gamma)
+    + [Getting the long-awaited `flag`](#getting-the-long-awaited-flag)
     + [Wrap Up](#wrap-up)
     + [Exploit Artifacts](#exploit-artifacts)
 
-## CTF란?
+## WTF is CTF?
 
-CTF는 Capture The Flag의 약자입니다. 정보보안 대회 중 하나로, 암호학(Crypto), 웹 보안(Web Security), 시스템 해킹(Pwnable), 역공학(Reversing) 등 다양한 분야에서 출제된 문제(Challenge)를 푸는 대회입니다. 최근 들어 블록체인 기술이 진화하고, 블록체인 보안의 중요성이 대두됨에 따라 블록체인 보안 관련 문제가 CTF에 등장하고 있습니다. 유명 크립토 투자 회사인 [Paradigm](https://www.paradigm.xyz/)도 매년 블록체인 보안 관련 [Paradigm CTF](https://ctf.paradigm.xyz/)를 개최합니다. 
+CTF stands for Capture The Flag. As one of the information security competitions, it is a competition to solve challenges from various fields such as cryptography, web security, system hacking (Pwnable), and reverse engineering (Reversing). Recently, as blockchain technology evolves and the importance of blockchain security emerges, blockchain security-related issues are appearing in CTF. [Paradigm](https://www.paradigm.xyz/), a famous crypto investment company, also holds [Paradigm CTF](https://ctf.paradigm.xyz/) related to blockchain security every year.
 
-CTF는 정보보안 전문가부터 뉴비까지 참여하여, 우리들의 실력을 측정하고 향상하는 매우 좋은 기회입니다. 운이 좋으면 저처럼 상금도 얻을 수 있죠. 이 과정에서, 다른 사람들과 협력할 수도 있기에 협동심을 키울 수도 있습니다. 제가 생각하였을 때, CTF의 가장 큰 장점은, 모르는 지식이 등장하였을 때, 두려워하지 않고 빠른 시간 안에 이를 이해하여 응용할 수 있는 능력이 키워진다는 것입니다. 또한, 사소한 디테일까지 빠트리지 않고 문제에 접근하는 능력도 길러집니다. ~~그리고 매우 재밌습니다.~~
+CTF is a very good opportunity to measure and improve our skills by participating from information security experts to newbies. If you're lucky, you might even win a prize like I did. In the process, you can also develop a sense of cooperation because you can cooperate with others. In my opinion, the biggest advantage of CTF is that when unknown knowledge appears, the ability to understand and apply it in a short time without being afraid is developed. It also develops the ability to approach problems without missing out on the smallest details. ~~And it's very amusing~~
 
-CTF는 보통 대학교나 회사, 국가 기관이 개최하며, 개인이 대회를 여는 경우도 있습니다. 뉴비를 위한 CTF부터, 정보보안 고인물을 위한 CTF까지, 난이도가 매우 다양합니다. 제가 참여한 [CODEGATE CTF](http://codegate.org/sub/introduce)는 과학기술정보통신부가 주최한, 2008년부터 개최된 유명한 대회입니다. 
+CTFs are usually held by universities, companies, or national organizations, and in some cases, individuals hold competitions. From CTF for newbies to CTF for veterans in information security, the difficulty level is very diverse. [CODEGATE CTF](http://codegate.org/sub/introduce), which I participated in, is a famous competition held since 2008, hosted by the Ministry of Science and ICT in South Korea.
 
-그렇다면 CTF 문제를 푼다라는 것은 어떤 의미이며, 채점은 어떻게 이루어지는지 알아봅시다. 문제들은, 출제자가 의도적으로 취약점을 넣어서 작성한 프로그램 혹은 데이터로 이루어집니다. 문제 풀이자는, 취약점을 발견하여 허락되지 않은 데이터를 읽거나, 프로그램을 의도하지 않은 상태로 조종합니다. 그 증거로 `flag`를 찾습니다. 여기서 통상적으로 `flag`란, alphanumeric하면서 너무 길지 않은 문자열입니다. 가령, `flag{yay_here_is_your_secret}`가 예시가 되겠습니다. 문제 풀이자는 `flag`를 출제자의 server에 제출하여, 점수를 얻게 됩니다. 보통은 쉬운 문제 일수록 많이 풀리게 되고, 배정된 점수가 낮아지는 Dynamic scoring 방식입니다. 대회 시간동안 얻어낸 점수의 총합이 가장 큰 팀이 우승하게 됩니다. 아래는 실제 대회 Scoreboard입니다.
+Then, let's find out what it means to solve CTF problems and how scoring is done. Problems are made up of programs or data written by the author intentionally introducing vulnerabilities. Problem solvers discover vulnerabilities, read unauthorized data, or manipulate programs into unintended states. As evidence, we look for `flag`. Here, the usual `flag` is a string that is alphanumeric and not too long. For example, `flag{yay_here_is_your_secret}` would be an example. The problem solver submits the `flag` to the author's server and gets points. In general, it is a dynamic scoring method in which the easier the problem is, the more it is solved and the assigned score is lowered. The team with the highest total score during the competition time wins. Below is the actual competition scoreboard.
 
 <p align="center">
     <img src="./codegate22f_scoreboard.jpg" alt="scoreboard" width="200" />
 </p>
 
-## CTF 문제 맛보기
+## A taste of the CTF problem
 
-아주 간단한 블록체인 문제를 예시로 살펴봅시다. 아래의 이더리움 스마트 컨트랙트 코드 및 그 주소가 문제 풀이자에게 주어집니다.
+Let's take a very simple blockchain problem as an example. The Ethereum smart contract code and its address below will be given to the problem solver.
 
 ```solidity
 contract Challenge {
@@ -62,17 +62,17 @@ contract Challenge {
 }
 ```
 
-문제의 의도는 명백합니다. 우리는 `flag`의 값을 알아내야 합니다. 언뜻 보기엔 10000 ETH를 지불하여 payable인 `query` 메소드를 호출하여 `flag`를 얻어내야 할 것만 같습니다. 하지만 우리는 저렇게 큰 돈이 없습니다. 어떻게 해야 할까요?
+The intent of the problem is clear. We need to figure out the value of `flag`. At first glance, it seems that we have to pay 10000 ETH to get a 'flag' by calling the payable 'query' method. But we don't have that much money. What should I do?
 
-[스마트 컨트랙트 위의 모든 데이터는 읽을 수 있습니다!](https://medium.com/hackernoon/your-private-solidity-variable-is-not-private-save-it-before-it-becomes-public-52a723f29f5e) 변수가 `private`로 선언되었더라도 말이죠. `getStorageAt` Ethereum JSONRPC(`getStorageAt(contract address, 0, latest)`)를 사용하여 slot 0번째 저장공간을 읽으면 `flag`를 얻을 수 있습니다!(`flag` 의 길이가 32 bytes 미만이라고 가정하였습니다. [FYI](https://ethereum.stackexchange.com/questions/107282/storage-and-memory-layout-of-strings)) 문제 풀이자는 얻어낸 `flag`를 출제자의 server에 제출하여, 점수를 얻습니다. 또한 문제 풀이자는 private keyword를 사용하였더라도, 블록체인 위의 모든 데이터는 읽을 수 있다는 중요한 사실을 상기하였습니다.
+[All data above the smart contract is readable!](https://medium.com/hackernoon/your-private-solidity-variable-is-not-private-save-it-before-it-becomes-public-52a723f29f5e) even if the variable is declared `private`. Using `getStorageAt` Ethereum JSONRPC(`getStorageAt(contract address, 0, latest)`), we can read slot 0th storage to get `flag`! (Assuming that `flag` is less than 32 bytes long. [FYI](https://ethereum.stackexchange.com/questions/107282/storage-and-memory-layout-of-strings)) The problem solver submits the obtained `flag` to the author's server and gets points . Also, the problem solver recalled the important fact that all data on the blockchain can be read even if the private keyword was used.
 
-## CODEGATE 2022 본선 Blockchain Challenge `Look It Up` 같이 풀어보기
+## CODEGATE 2022 Final Blockchain Challenge `Look It Up` Walkthrough
 
-더 많은 것을 배우고, `flag`를 얻기 위해 이제는 CODEGATE 2022 본선 블록체인 문제인 `Look It Up` 문제를 단계별로 같이 풀어봅시다. 대회 문제는 위 맛보기보다 훨씬 어렵습니다! 차근차근 문제를 부셔보도록 합시다. 단순 해답을 제시하는 것이 아니라, 대회 도중 문제를 풀이하는데 있어 제가 진행하였던 생각에 대하여 자세히 설명해보겠습니다.
+To learn more and get a `flag`, let's now solve the CODEGATE 2022 final block chain problem `Look It Up` step by step. The contest questions are much harder than the teaser above! Let's break down the problem step by step. Rather than presenting simple answers, I will explain in detail my thoughts in solving the problems during the competition.
 
-### 문제 만져보기
+### Recon
 
-문제의 Description입니다.
+A Description of the problem.
 
 ```
 Oh wow, a solidity code. I have zero knowledge on solidity code. Better look it up.
@@ -88,7 +88,7 @@ Also, make sure to kill your instances after you get the flag.
 nc 3.34.81.192 31337
 ```
 
-Description을 읽어보니, Paradigm CTF에서 사용하였던 [인프라](https://github.com/paradigmxyz/paradigm-ctf-infrastructure)를 사용하였다고 하네요. 주어진 문제 endpoint를 접속해봅시다. [`nc`](https://en.wikipedia.org/wiki/Netcat) command를 활용하여, 주어진 IP, PORT를 사용하여 문제와 상호작용합니다(현재는 문제 서버가 종료되어 endpoint에 접속할 수 없습니다. 인프라를 사용하여 같은 환경을 구축할 수 있습니다).
+After reading the description, it says that the [infrastructure](https://github.com/paradigmxyz/paradigm-ctf-infrastructure) used in Paradigm CTF was used. Let's connect to the given problem endpoint. Using the [`nc`](https://en.wikipedia.org/wiki/Netcat) command, interact with the problem using the given IP and PORT (Currently, the problem server is shut down and cannot connect to the endpoint. Infrastructure can be used to build the same environment).
 
 ```sh
 $ nc 3.34.81.192 31337
@@ -99,7 +99,7 @@ action? 1
 ticket please: kaistgonbestteam
 ```
 
-문제를 만져보기 위하여, Stdin으로 action(`1`) 및 ticket(`kaistgonbestteam`)을 입력하였습니다. 그에 대한 Stdout으로 다음의 결과를 얻습니다.
+To tinker with the problem, I entered action(`1`) and ticket(`kaistgonbest`) as Stdin. Stdout to it yields:
 
 ```
 your private blockchain has been deployed
@@ -111,11 +111,11 @@ private key:    0xa6855daade7763293890ba6f8aceec84c40811653d22970650db5f7a962e52
 setup contract: 0x5aB95D9cabC56DA53767904dD1884A918fa17902
 ```
 
-저를 위한 개인 블록체인이 배포되었다고 합니다. 문제 Setup 스마트 컨트랙트 주소 및 ETH가 (문제를 풀 만큼) 들어 있는 주소의 private key, 블록체인과 상호작용할 수 있는 RPC endpoint가 주어집니다. 
+It is said that a personal blockchain for me has been deployed. I am given a problem setup smart contract address, a private key of the address containing ETH (enough to solve the problem), and an RPC endpoint that can interact with the blockchain.
 
-이와 함께 문제 배포파일인 [Challenge.sol](Challenge.sol), [Setup.sol](Setup.sol)이 주어집니다.
+Along with this, the problem distribution files [Challenge.sol](Challenge.sol) and [Setup.sol](Setup.sol) are given.
 
-`Setup.sol`은 다음과 같습니다.
+`Setup.sol` looks like this:
 ```solidity
 pragma solidity 0.8.0;
 
@@ -135,7 +135,7 @@ contract Setup {
 }
 ```
 
-Challenge 컨트랙트를 배포하고, 문제가 풀렸는지 확인하기 위한 `isSolved` 메소드가 구현된 것을 확인할 수 있습니다. `isSolved` 메소드가 참을 반환하게 만들면 문제가 풀립니다. 이는 [인프라의 소스 코드](https://github.com/paradigmxyz/paradigm-ctf-infrastructure/blob/08a0f1a0fc3bd1f661ec425021bc46f5bdf9b906/images/eth-challenge-base/eth_sandbox/launcher.py#L181)에서 확인해볼 수 있습니다. 결과적으로 다음의 Python 코드가 동작하여 문제 풀이 여부를 판별합니다.
+You can see that the `isSolved` method is implemented to check if the problem is solved. Making the `isSolved` method return true solves the problem. This can be found in the [source code of the infrastructure](https://github.com/paradigmxyz/paradigm-ctf-infrastructure/blob/08a0f1a0fc3bd1f661ec425021bc46f5bdf9b906/images/eth-challenge-base/eth_sandbox/launcher.py#L181). Internally, the following Python code works to determine whether the problem is solved.
 
 ```python
 def is_solved_checker(web3: Web3, addr: str) -> bool:
@@ -148,7 +148,7 @@ def is_solved_checker(web3: Web3, addr: str) -> bool:
     return int(result.hex(), 16) == 1
 ```
 
-`isSolved` 메소드가 참을 반환하기 위해, `challenge.solved()`의 구현을 보러 `Challenge.sol`로 넘어갑시다. `Challenge.sol`는 다음과 같습니다.
+To make the `isSolved` method to return true, let's jump to `Challenge.sol` to see the implementation of `challenge.solved()`. The `Challenge.sol` is:
 
 ```solidity
 pragma solidity 0.8.0;
@@ -267,7 +267,7 @@ contract Challenge {
 }
 ```
 
-114줄의 Solidity 코드입니다. 문제의 목표는 `solved` bool 변수를 참으로 만드는 것입니다. 그래야 Setup 컨트랙트의 `isSolved` 메소드가 참을 반환하기 때문이죠. 그렇다면 `solved` bool 변수를 taint하는 곳이 어디가 있는지 살펴봅시다. 아래의 `declareSolved` 메소드가 유일합니다.
+This is 114 lines of Solidity code. The goal of the problem is to make the `solved` bool variable true. That's because to make the `isSolved` method of the Setup contract return true. So let's see where we taint the `solved` bool variable. The `declareSolved` method below is the only one.
 
 ```solidity
 function declareSolved() public {
@@ -277,90 +277,89 @@ function declareSolved() public {
 }
 ```
 
-`solved1`, `solved2`, `solved3` bool 변수들을 모두 참으로 만들어야만 합니다. 이를 위해서는, `require`에 걸리지 않는 입력을 사용하여 `challenge1`, `challenge2`, `challenge3`을 호출하여야만 합니다. 정리하여 이 문제는 부분 문제가 3개가 있으며, 각 문제는 다른 문제에 영향을 주지 않는 형태입니다. Math-heavy해 보이는 이 세 `challenge`를 풀어봅시다. 코드로 표현된 형태를 수식으로 옮겨 생각합니다.
+I need to set all the `solved1`, `solved2`, `solved3` bool variables to true. To do this, we must call `challenge1`, `challenge2`, `challenge3` with inputs that all passes `require`. In summary, this problem has three subproblems, each of which does not affect the others. Let's solve these three `challenges' that seem math-heavy. Will think by moving the form expressed in code into a mathematical expression.
 
-문제를 본격적으로 접근하기에 앞서, 기본적으로 확인해야 할 사항이 있습니다. 바로 코드에서 사용되는 Solidity 컴파일러의 버전입니다. `pragma solidity 0.8.0;`이므로, 언어 자체에 integer overflow detection이 [내장](https://solidity-by-example.org/hacks/overflow/)되어 있습니다. 또, 각 `challenge`간 유사성을 확인할 수 있습니다. `sanity_check` 메소드, `final_check` 메소드를 모두 통과하여야 합니다. 이 공통 메소드들을 우선 분석해봅시다.
+Before approaching the problem in earnest, there are basic things to check. We first check the version of the Solidity compiler which is used. As of `pragma solidity 0.8.0;`, integer overflow detection is [built-in](https://solidity-by-example.org/hacks/overflow/) into the language itself. Also, we can check the similarity between each `challenge`. Both the `sanity_check` method and the `final_check` method must be passed. Let's analyze these common methods first.
 
-문제에 제시된 $p$는 254 bit 크기의 [소수](http://factordb.com/index.php?query=21888242871839275222246405745257275088548364400416034343698204186575808495617)입니다. $p$의 수학적 특성을 확인하기 위하여 $p - 1, p + 1$를 소인수분해 하여 [smoothness](https://en.wikipedia.org/wiki/Smooth_number)를 확인하였으나 좋은 성질은 얻지 못하였습니다.
+$p$ presented in the problem is a [prime](http://factordb.com/index.php?query=21888242871839275222246405745257275088548364400416034343698204186575808495617) with a size of 254 bits. In order to check the mathematical properties of $p$, $p - 1, p + 1$ was factorized to check [smoothness](https://en.wikipedia.org/wiki/Smooth_number), but there were no useful properties.
 
-### `sanity_check` 분석
+### `sanity_check` Analysis
 
-메소드 인자는 다음의 조건을 만족하여야 합니다.
+Method arguments must satisfy the following conditions.
 
-1. $n + 1$이 2의 거듭제곱입니다.
-2. $f$의 길이는 $n$입니다. $t$, $s_{1}$, $s_{2}$의 길이는 $n + 1$입니다.
-3. $f$, $t$, $s_{1}$, $s_{2}$를 이루는 원소는 [유한체](https://en.wikipedia.org/wiki/Finite_field) $GF(p)$ 의 원소 입니다(모두 $p$ 미만의 정수이어야 합니다). $p$가 소수이기 때문입니다. 
+1. $n + 1$ is a power of 2.
+2. The length of $f$ is $n$. The length of $t$, $s_{1}$, and $s_{2}$ is $n + 1$.
+3. Elements that make up $f$, $t$, $s_{1}$, and $s_{2}$ are [finite field](https://en.wikipedia.org/wiki/Finite_field) $GF(p )$ elements(all must be non-negative integers less than $p$). It is because $p$ is prime.
 
-### `final_check` 분석
+### `final_check` Analysis
 
-`sanity_check` 메소드와 비교하였을 때, $\beta$, $\gamma$ 변수가 추가됩니다. 각 `challenge`의 로직에서 이 두 변수를 계산하여, `final_check` 메소드에게 확인을 맡기는 방식입니다. 메소드를 통과하기 위하여 다음의 등식 $A$ 을 만족하여야 합니다. 모든 계산은 $GF(p)$위에서 이루어집니다. 
+Compared to the `sanity_check` method, the $\beta$ and $\gamma$ variables are added. The logic of each `challenge` calculates these two variables and leaves the `final_check` method to check. The following equation $A$ must be satisfied to pass through the method. All calculations are done on $GF(p)$.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} (\gamma + f[i]) = \newline 
 \prod_{i=0}^{n} (\gamma (1 + \beta) +  s_{1}[i + 1] \beta + s_{1}[i]) \prod_{i=0}^{n} (\gamma (1 + \beta) + s_{2}[i + 1] \beta + s_{2}[i]) \quad \cdots \quad A
 $$
 
-이 때, $t$의 원소들과 $f$의 원소들의 교집합이 공집합이어야 합니다. 쉽게 말해, $t$에 포함된 원소들은 $f$에 포함되지 않아야 합니다. 그 반대도 마찬가지입니다. 
+Also, the intersection of the elements of $t$ and the elements of $f$ must be empty. Simply put, the elements contained in $t$ must not be contained in $f$ and vice versa.
 
-### `challenge1` 통과하기
+### Passing `challenge1`
 
-$\beta$와 $\gamma$는 다음과 같이 계산됩니다.
+$\beta$ and $\gamma$ are calculated as:
 
 ```solidity
 bytes32 beta = keccak256(abi.encode(n, f, t, s1, s2, uint256(1)));
 bytes32 gamma = keccak256(abi.encode(n, f, t, s1, s2, uint256(2)));
 ```
 
-[`keccak256`](https://en.wikipedia.org/wiki/SHA-3) 메소드는 [암호학적 해시 함수(CHF)](https://en.wikipedia.org/wiki/Cryptographic_hash_function)이므로, [avalanche effect](https://en.wikipedia.org/wiki/Avalanche_effect)를 만족합니다. 쉽게 말하여, 입력이 살짝 바뀌어도, 출력이 많이(50% 확률로 출력의 각 비트가 뒤집어집니다) 바뀐다는 것입니다. 또, `abi.encode` 메소드는 [dynamic type를 포함](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html)하여, 여러 데이터를 인코딩합니다. 인코딩으로 인하여 abi collision을 피합니다. `abi.encode`는 일대일 대응(bijectivity)인 [affine 함수](https://mathworld.wolfram.com/AffineFunction.html)입니다. 쉽게 말하여, 주어진 입력을 $x$라고 하였을 때, 출력이 $ax + b$ 형태인 변환을 말하는 것입니다. 
+Since the [`keccak256`](https://en.wikipedia.org/wiki/SHA-3) method is the [Cryptographic Hash Function (CHF)](https://en.wikipedia.org/wiki/Cryptographic_hash_function), [avalanche effect](https://en.wikipedia.org/wiki/Avalanche_effect) is satisfied. In simple terms, even if the input changes slightly, the output changes a lot (with a 50% chance each bit in the output is flipped). Also, the `abi.encode` method encodes various data [including dynamic types](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html). We avoid abi collision using encoding. `abi.encode` is an [affine function](https://mathworld.wolfram.com/AffineFunction.html) with a one-to-one correspondence (bijectivity). To put it simply, it is a transformation in which the output is of the form $ax + b$ when the given input is $x$.
 
-위와 같은 수학적 고찰을 수행하여, $n, f, t, s_{1}, s_{2}$에 어떤 값을 사용하든, $\beta$와 $\gamma$의 값을 같게 만들 수는 없다는 결론을 얻습니다. `abi.encode`의 마지막 인자가 각각 `uint256(1)`, `uint256(2)`로 의도적으로 다르게 설정되어 있기 때문입니다. $\beta \neq \gamma$임을 확정하고 적합한 $n, f, t, s_{1}, s_{2}$값을 찾아봅시다. 
+By performing the above mathematical considerations, it is concluded that no matter what values are used for $n, f, t, s_{1}, s_{2}$, the values of $\beta$ and $\gamma$ cannot be made the same. This is because the last argument of `abi.encode` is intentionally set differently to `uint256(1)` and `uint256(2)`, respectively. Let's confirm that $\beta \neq \gamma$ and find the appropriate $n, f, t, s_{1}, s_{2}$ values.
 
-다음 세 항이 비슷한 구조를 가짐을 관찰합니다.
+Observe that the following three terms have a similar structure.
 
 $$ \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]), \prod_{i=0}^{n} (\gamma (1 + \beta) +  s_{1}[i + 1] \beta + s_{1}[i]),  \prod_{i=0}^{n} (\gamma (1 + \beta) + s_{2}[i + 1] \beta + s_{2}[i]) $$
 
-만족해야 하는 등식 $A$를 간단하게 하기 위하여 $t$와 $s_{1}$의 값을 동등하게 설정합니다. 
+Set the values of $t$ and $s_{1}$ equal to simplify the equation $A$ which must be satisfied.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} (\gamma + f[i]) = \prod_{i=0}^{n} (\gamma (1 + \beta) + s_{2}[i + 1] \beta + s_{2}[i])
 $$
 
-관찰을 통하여 $f$와 $s_{2}$의 모든 원소를 $0$으로 설정하여, 변환된 등식이 성립함을 확인합니다.
+Through observation, by setting all elements of $f$ and $s_{2}$ to $0$, it is confirmed that the transformed equation holds.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} \gamma = \prod_{i=0}^{n} (\gamma (1 + \beta)) $$
 
-정리하여 $\beta, \gamma, n$의 값에 상관없이, $t = s_{1}$만 만족하면 `challenge1`를 해결할 수 있습니다. 
-$n$과 $t, s_{1}$의 원소들의 실제 값은 앞서 정리한 조건을 만족하도록 임의로 설정하였습니다. $f$와 $t$의 원소가 겹치지 않는 것을 확인하였습니다.
+In summary, regardless of the values of $\beta, \gamma, n$, if only $t = s_{1}$ is satisfied, `challenge1` can be solved. The actual values of the elements of $n$, $t$ and $s_{1}$ were arbitrarily set to satisfy the conditions outlined above. It was confirmed that the elements of $f$ and $t$ do not overlap.
 
 $$ n = 1, f = [0], t = [1, 1], s_{1} = [1, 1], s_{2} = [0, 0] $$
 
-지금까지는 간단한 수학 문제로 보입니다. 다음 `challenge`로 넘어가 봅시다.
+So far it looks like a simple math problem. Let's move on to the next `challenge`.
 
-### `challenge2` 통과하기
+### Passing `challenge2`
 
-`challenge1`과 비교하여 $\beta$와 $\gamma$를 계산하는 로직이 Solidity inline assembly로 바뀌었습니다. `challenge1`과 비슷하게 `keccak256` opcode로 $\beta$와 $\gamma$를 계산합니다. 그럼 `challenge1`의 결과를 그대로 사용하면 되지 않을까? 어림도 없습니다. 다음의 `require`가 추가됩니다.
+The logic for calculating $\beta$ and $\gamma$ compared to `challenge1` has been replaced with a Solidity inline assembly. Similar to `challenge1`, it computes $\beta$ and $\gamma$ with the `keccak256` opcode. So, why not use the result of `challenge1` as it is? Not a chance. The following `require` is added.
 
 ```solidity
 require(s1[n] == s2[0], "middle equality check failed");
 ```
 
-굉장히 골치가 아픕니다. 긴 시간 펜을 굴려봐도 $s_{1}[n] = s_{2}[0]$까지 만족하는 입력을 찾기가 쉽지 않습니다. 수학적으로 더 고민해봅시다. $\beta$와 $\gamma$는 우리가 입력한 메소드 인자에 따라서 바뀌니, $\beta$와 $\gamma$의 값에 상관없이 $s_{1}[n] = s_{2}[0]$일 때 $n, f, t, s_{1}, s_{2}$값을 찾아야 합니다. 조건을 만족하는 $n, f, t, s_{1}, s_{2}$의 존재성에 대하여 의문점을 가지기 시작합니다.
+The newly added contraint gives me a headache. It is not easy to find an input that satisfies $s_{1}[n] = s_{2}[0]$ even with a long manual calcuation. Let's think more mathematically. $\beta$ and $\gamma$ change according to the method parameters we input, so $s_{1}[n] = s_{2}[0]$ must be satisfied regardless of the values of $\beta$ and $\gamma$. We begin to question the existence of $n, f, t, s_{1}, s_{2}$ that satisfy the condition.
 
-#### 유한체 위에서의 다항식 인수분해의 유일성
+#### Uniqueness of polynomial factorization on a finite field
 
-$A$의 우변을 이루는 $2n$개의 다항식 중 $s_{1}[n], s_{2}[0]$에 영향받는 다항식을 골라냅니다. $P(\beta, \gamma) = (\gamma(1 + \beta) + s_{1}[n] \beta + s_{1}[n - 1]), Q(\beta, \gamma) = (\gamma(1 + \beta) + s_{2}[1] \beta + s_{2}[0])$라 할 때, $P$와 $Q$가 영향권입니다. 두 식 모두 $\beta, \gamma$에 관하여 1차식입니다. 위 두 항에 대한 효과를 상쇄하기 위하여 등식 $A$의 좌변을 관찰해봅시다. 
+Among the $2n$ polynomials forming the right side of $A$, lets pick the polynomial affected by $s_{1}[n], s_{2}[0]$. Let $P(\beta, \gamma) = (\gamma(1 + \beta) + s_{1}[n] \beta + s_{1}[n - 1]), Q(\beta, \gamma) = (\gamma(1 + \beta) + s_{2}[1] \beta + s_{2}[0])$. $P$ and $Q$ are polynomials which are affected. Both expressions are linear with respect to $\beta, \gamma$. To cancel out the effect of the above two terms, let's observe the left side of the equation $A$.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} (\gamma + f[i]) $$
 
-$(1 + \beta)^{n}$을 배분하여 정리하면 다음과 같습니다. 배분하는 이유는, $\beta$와 $\gamma$에 대한 차수를 맞춰주기 위해서입니다.
+By distributing $(1 + \beta)^{n}$, we get the following formula. The reason for the distribution is to match the order of terms related with $\beta$ and $\gamma$.
 
 $$ \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} (\gamma (1 + \beta) + f[i] \beta + f[i]) $$
 
-$A$의 좌변을 이루는 $2 n$개의 다항식 중 우변의 $P$와 $Q$가 다항식 2개와 대응됩니다. $P$와 $Q$를 제외한, 우변을 이루는 $2n - 2$개의 다항식의 계수를 관찰해보면, $0 < i < n$에 인 $i$에 대하여 $s_{1}[i]$와 $s_{2}[i]$는 다항식에 각각 2번 사용되게 됩니다.
+Of the $2 n$ polynomials constituting the left side of $A$, $P$ and $Q$ on the right side correspond to two polynomials. Observing the coefficients of $2n - 2$ polynomials forming the right side, excluding $P$ and $Q$, $s_{1}[i]$ and $s_{2}[i]$ for $i$ in $0 < i < n$ will be used twice each in the polynomial.
 
-이러한 성질에 의하여 $P(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i])$이어야 하고, $Q(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + f[i] \beta + f[i]) $이어야 합니다. $P$, $Q$의 위치가 바뀌어도 됩니다. 한 쪽에 쏠리게 배치할 수 없다는 뜻입니다. 그렇다면, $s_{1}[n] = s_{2}[0]$를 만족하여야 하기 떄문에 `final_check`에서 유래된 $t$의 원소들과 $f$의 원소들의 교집합이 공집합인 조건을 만족할 수 없습니다. 이 모든 논증은 [유한체 위에서의 다항식 인수분해](https://en.wikipedia.org/wiki/Factorization_of_polynomials_over_finite_fields) 결과가 유일하다는 사실에 바탕을 둡니다. 
+By this property, $P(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) $, $Q(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + f[i] \beta + f[i]) $ is derived. The position of $P$ and $Q$ can be interchanged. This means that $P$ and $Q$ cannot be placed leaning to one side. Then, since $s_{1}[n] = s_{2}[0]$ must be satisfied, the condition that the intersection of the elements of $t$ derived from `final_check` and the elements of $f$ is an empty set can't be satisfied. All of these arguments are based on the fact that the [polynomial factorization on a finite field](https://en.wikipedia.org/wiki/Factorization_of_polynomials_over_finite_fields) is unique.
 
-#### EVM Assembly 분석
+#### EVM Assembly Analysis
 
-그렇다면 앞서 한 가정이 틀렸다는 결론입니다. 자연스럽게 $\beta$와 $\gamma$를 계산하는 로직이 왜 바뀌었을까에 대한 고민을 시작합니다. 정말로 $\beta$와 $\gamma$는 우리가 입력한 메소드 인자에 따라서 결정될지 다시 확인하기 위해 inline assembly를 차근차근 뜯어봅시다. [EVM Opcode Specification](https://ethervm.io/)를 봅시다.
+If so, the assumption made above($\beta$ and $\gamma$ is dependent) is wrong. Naturally, we start thinking about why the logic for calculating $\beta$ and $\gamma$ has changed. Let's take a look at the inline assembly step by step to check again whether $\beta$ and $\gamma$ are really determined according to the method arguments we entered. Let's refer to [EVM Opcode Specification](https://ethervm.io/).
 
 ```solidity
 uint256 len = (12 + 4 * n) * 0x20;
@@ -375,22 +374,23 @@ assembly {
 }
 ```
 
-1. `mload(0x40)`: `ptr = memory[0x40:0x40 + 32]`를 수행합니다. `0x40`에는, EVM의 [free memory pointer](https://ethereum.stackexchange.com/questions/9603/understanding-mload-assembly-function)가 저장되어 있습니다. 연산하기 위하여 필요한 메모리의 위치를 우선 확보하는 것입니다.
-2. `calldatacopy(ptr, 4, len)`: `memory[ptr:ptr + len] = msg.data[4:4 + len])`을 수행합니다. 즉, transaction calldata의 `4`번째(0 indexed) 바이트부터 `4 + len` 바이트까지 memory에 복사합니다. 
-3. `mstore(add(ptr, len), 1)`: `memory[ptr + len: ptr + len + 32] = 1`을 수행합니다. 앞서 복사한 메모리에 바로 `1`을 이어 붙입니다.
-4. `beta := keccak256(ptr, add(len, 32))`: `beta = keccak256(memory[ptr:ptr + len + 32])`을 수행합니다. 메모리에 명시적으로 적은 데이터를 해싱하여 그 결과를 `beta`에 저장합니다. 32를 더하는 이유는, 앞서 `1`이 적혔을 때 32바이트를 사용하였기 때문입니다.
-5. `mstore(add(ptr, len), 2)`: `memory[ptr + len:ptr + len + 32] = 2`를 수행합니다. `1`을 적었던 곳에 다시 `2`를 적습니다.
-6. `gamma := keccak256(ptr, add(len, 32))`: `gamma = keccak256(memory[ptr:ptr + len + 32])`을 수행합니다. 메모리에 명시적으로 적은 데이터를 해싱하여 그 결과를 `gamma`에 저장합니다. 32를 더하는 이유는 4번과 동일합니다.
 
-이 때, `len = (12 + 4 * n) * 0x20`입니다. [`calldatacopy`](https://ethervm.io/#37) instruction을 사용하였으므로, transaction calldata의 구조를 확인합시다. calldata의 일부(`msg.data[4:4 + len]`)를 그대로 복사해서 $\beta$와 $\gamma$를 구하였습니다.
+1. `mload(0x40)`: `ptr = memory[0x40:0x40 + 32]`. In `0x40`, EVM's [free memory pointer](https://ethereum.stackexchange.com/questions/9603/understanding-mload-assembly-function) is stored. It is to first secure the location of memory necessary for calculation.
+2. `calldatacopy(ptr, 4, len)`: `memory[ptr:ptr + len] = msg.data[4:4 + len])`. That is, from the `4`th (0 indexed) byte of transaction calldata to `4 + len` bytes are copied to memory.
+3. `mstore(add(ptr, len), 1)`: `memory[ptr + len: ptr + len + 32] = 1`. Paste `1` directly to the previously copied memory.
+4. `beta := keccak256(ptr, add(len, 32))`: `beta = keccak256(memory[ptr:ptr + len + 32])`. Hash the data which were explicitly written in memory and store the result in `beta`. The reason for adding 32 is that 32 bytes were used when `1` was written earlier.
+5. `mstore(add(ptr, len), 2)`: `memory[ptr + len:ptr + len + 32] = 2`. Where `1` was written, write `2` again.
+6. `gamma := keccak256(ptr, add(len, 32))`: `gamma = keccak256(memory[ptr:ptr + len + 32])`. Hash the data which were explicitly written in memory and store the result in `gamma`. The reason for adding 32 is the same as number 4.
+
+`len = (12 + 4 * n) * 0x20` in this case. Since the [`calldatacopy`](https://ethervm.io/#37) instruction was used, let's check the structure of the transaction calldata. $\beta$ and $\gamma$ were obtained by using partial calldata (`msg.data[4:4 + len]`).
 
 #### Transaction Calldata Layout
 
-calldata의 구조를 다루는 자세한 [글](https://degatchi.com/articles/reading-raw-evm-calldata)입니다. 이 내용을 참조하여 calldata를 뜯어봅시다. `function challenge2(uint256 n, uint256[] memory f, uint256[] memory t, uint256[] memory s1, uint256[] memory s2)` 메소드를 아래의 인자로 호출한 transaction의 calldata를 만듭니다. `challenge2`를 통과할 수는 없지만, calldata 구조 파악 용도입니다.
+Here is a [detailed article](https://degatchi.com/articles/reading-raw-evm-calldata) dealing with the structure of calldata. Let's understand calldata structure by referring to this content. Let's first create a calldata which method `function challenge2(uint256 n, uint256[] memory f, uint256[] memory t, uint256[] memory s1, uint256[] memory s2)` is called with the following arguments. It cannot pass `challenge2`, but it is for figuring out the calldata structure.
 
 $$ n = 3, f = [1, 2, 3], t = [4, 5, 6, 7], s_{1} = [8, 9, 10, 11], s_{2} = [12, 13, 14, 15] $$
 
-[web3py](https://web3py.readthedocs.io/en/v5/)와 [py-solc-x](https://solcx.readthedocs.io/en/latest/)를 이용하여 calldata를 생성합니다. 아래는 `0x` prefix와 function selector를 제외하고 32 바이트 단위로 자르는 Python 코드입니다.
+Create calldata using [web3py](https://web3py.readthedocs.io/en/v5/) and [py-solc-x](https://solcx.readthedocs.io/en/latest/). Below is the python code that cuts the calldata in units of 32 bytes, excluding the `0x` prefix and function selector.
 
 ```python
 from solcx import compile_source, install_solc
@@ -423,7 +423,7 @@ for i in range(len(layout) // 32):
     print("{:03x}".format(i * 32), layout[32 * i : 32 * i + 32].hex())
 ```
 
-결과는 다음과 같습니다. 입력된 인자가 `0x1`부터 `0xf`까지 쌓여있습니다. 곳곳에 직접 입력하지 않은 다른 값들도 있습니다. 결국 EVM은 아래의 calldata를 파싱하여, function selector를 활용하여 메소드를 호출합니다. [ABI specification](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html#abi)에 의하여, 각 32(0x20) 바이트가 어떤 의미를 가지는지 주석을 달아봅시다. $n$을 제외한 $f, t, s_{1}, s_{2}$는 [dynamic type](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html#use-of-dynamic-types)입니다. EVM Stack Machine이 메소드 호출 시 인자가 어떻게 전달되는지 이해할 수 있습니다. Dynamic type에 대하여, EVM이 calldata로부터 데이터를 파싱하기 위하여, argument의 길이 및 calldata내부에서의 offset를 calldata가 포함된다는 것을 예시를 통하여 알 수 있습니다. 32 바이트씩 총 24줄이 출력되었습니다.
+The result is presented below. The input parameters are stacked, from `0x1` to `0xf`. There are other values which are not input arguments. Eventually, the EVM parses the calldata below and calls the method using the function selector. According to [ABI specification](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html#abi), let's comment what each 32 (0x20) bytes mean. $f, t, s_{1}, s_{2}$ are [dynamic type](https://docs.soliditylang.org/en/v0.8.0/abi-spec.html#use-of-dynamic-types) except for $n$. Observing the calldata structure helps us to understand how arguments are passed to EVM Stack Machine when calling a method. Regarding dynamic type, in order for EVM to parse data from calldata, we can notice that calldata includes argument length and offset. A total of 24 lines of 32 bytes were the final output.
 
 ```
 000 0000000000000000000000000000000000000000000000000000000000000003    # 1st argument: n = 0x3
@@ -452,25 +452,25 @@ for i in range(len(layout) // 32):
 2e0 000000000000000000000000000000000000000000000000000000000000000f    # 5th argument: s2[3] = 0xf
 ```
 
-앞서 $\beta$와 $\gamma$ 계산 시 calldata의 일부(`msg.data[4:4 + len]`), `len = (12 + 4 * n) * 0x20` 가 사용되었습니다. 위의 예시에서는 $n = 3$이므로, `len = (12 * 4 * 3) * 0x20 = 24 * 0x20`, 즉, 위에 출력된 모든 calldata가 `msg.data[4:4 + len]`에 해당한다는 것을 알 수 있습니다.
+When calculating $\beta$ and $\gamma$ earlier, partial calldata (`msg.data[4:4 + len]`), `len = (12 + 4 * n) * 0x20` was used. In the example above, $n = 3$, so `len = (12 * 4 * 3) * 0x20 = 24 * 0x20`, that is, all calldata printed above are based on `msg.data[4:4 + len]`.
 
-#### Calldata offset 조작을 통한 $\beta$와 $\gamma$ 고정하기
+#### Calldata Offset Manipulation to Fix $\beta$ and $\gamma$
 
-만약 $\beta$와 $\gamma$가 입력된 인자에 상관없이 고정된 값이고, 우리가 알고 있는 값이라면 등식 $A$및 $s_{1}[n] = s_{2}[0]$를 만족하는 입력을 쉽게 찾을 수 있을까요? `challenge1`에서 수행하였던 것처럼 등식 $A$를 다시 관찰합시다.
+If $\beta$ and $\gamma$ are fixed values regardless of input arguments, and if they are known values, is it easy to find an input that satisfies the equations $A$ and $s_{1}[n] = s_{2}[0]$? As we did in `challenge1`, let's observe the equation $A$ again.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} (\gamma + f[i]) = \newline 
 \prod_{i=0}^{n} (\gamma (1 + \beta) +  s_{1}[i + 1] \beta + s_{1}[i]) \prod_{i=0}^{n} (\gamma (1 + \beta) + s_{2}[i + 1] \beta + s_{2}[i]) \quad \cdots \quad A
 $$
 
- $\beta$와 $\gamma$값을 알고 있고, 이 값이 상수라면 위 식을 만족하는 입력 $n, f, t, s_{1}, s_{2}$를 찾는건 매우 쉬워집니다. 간단하게 생각하여, 등식 $A$의 좌변과 우변을 모두 $0$으로 만들어봅시다.
+If the values of $\beta$ and $\gamma$ are known, and if these values are constants, then it becomes very easy to find the inputs $n, f, t, s_{1}, s_{2}$ that satisfy the above expression. Simply thinking, let's make both the left and right sides of the equation $A$ to $0$.
 
 $$ f[0] = -\gamma, s_{2}[n - 1] = 0, s_{2}[n] = - \gamma(1 + \beta)$$
 
-위 값을 사용하면, 나머지 입력과 관계없이 좌변과 우변 모두 $0$이 됨을 알 수 있습니다. 여기서 주의할 점은 인자의 모든 원소가 $GF(p)$의 원소에 포함되어야 하므로, 실제 값을 사용할 때는 $p$로 나눈 나머지를 사용해야 합니다. 그렇다면 어떻게 $\beta$와 $\gamma$가 입력된 인자에 상관 없는, 값을 아는 상수로 설정할 수 있을까요? 
+Using the values above, we can see that both the left and right sides will be $0$ regardless of the rest of the input. The thing to note here is that all elements of the argument must be in $GF(p)$, so when using the actual value, we must use the remainder divided by $p$. So, how do we set $\beta$ and $\gamma$ to constants whose values are known, independent of the input arguments?
 
-놀랍게도 앞서 설명한 calldata layout의 구조를 응용하면 가능합니다. `msg.data[4: 4 + len]`가 $\beta$와 $\gamma$에 사용됩니다. 만약, 메소드 인자 $n, f, t, s_{1}, s_{2}$를 정상적으로 전달하면서, `msg.data[4: 4 + len]`의 값을 상수로 만들어버릴 수 있다면 $\beta$와 $\gamma$를 값을 아는 상수로 설정할 수 있습니다. `msg.data[4: 4 + len]`가, $\beta$와 $\gamma$에 영향을 받지 않는 독립 상수로 바뀌어버렸기 때문입니다. Calldata layout에 적어놓은 주석을 다시 살펴봅시다.
+Surprisingly, it is possible by manipulating the structure of the calldata layout described above. `msg.data[4: 4 + len]` is used for $\beta$ and $\gamma$. If we can make the value of `msg.data[4: 4 + len]` a constant while passing the method arguments $n, f, t, s_{1}, s_{2}$ normally, we can set $\beta$ and $\gamma$ to constants whose values we know. This is because `msg.data[4: 4 + len]` has been changed to an independent constant that is not affected by $\beta$ and $\gamma$. Let's look again at the comments we made in the calldata layout.
 
-두 번째 인자인 $f$에 해당하는 calldata 시작 위치 및 $f$에 포함된 값을 나타내는 부분은 다음과 같습니다.
+The part indicating the start position of the calldata corresponding to the second argument $f$ and the value included in $f$ is as follows.
 
 ```
 ...
@@ -483,7 +483,7 @@ $$ f[0] = -\gamma, s_{2}[n - 1] = 0, s_{2}[n] = - \gamma(1 + \beta)$$
 ...
 ```
 
-Calldata에 담긴 값은 공격자가 조정할 수 있습니다. 다시 말하여 인자의 offset도 조정할 수 있습니다. 이를 활용하여, `0x300`바이트에 $f$의 실제 인자를 적도록 offset을 수정합니다. 기존 $f$에 포함된 값을 담는 주소는 임의의 값으로 채워줍니다. 저는 `0`로 채워보겠습니다.
+The value contained in calldata can be manipulated by an attacker. In other words, the offset of the argument can also be adjusted. Utilizing this, we modify the offset to write the actual value of $f$ at offset `0x300`. The address containing the value included in the existing $f$ can filled with a random value. I will fill it with `0`.
 
 ```
 ...
@@ -500,11 +500,11 @@ Calldata에 담긴 값은 공격자가 조정할 수 있습니다. 다시 말하
 360 0000000000000000000000000000000000000000000000000000000000000003    # 2nd argument: f[2] = 0x3
 ```
 
-이처럼 calldata를 조작하면 $\beta$와 $\gamma$에 영향을 주는 `msg.data[4:4 + len]`부분을 상수로 고정할 수 있습니다. 그러므로 $\beta$와 $\gamma$의 값도 고정됩니다! 앞서 도출한 결과를 적용하여 `challenge2`를 해결할 수 있습니다. $n, f, t, s_{1}, s_{2}$의 실제 값은 아래와 같이 설정합니다. 앞서 도출한 $f[0], s_{2}[n - 1], s_{2}[n - 2]$를 사용하고, $s_{1}[n] = s_{2}[0]$ 조건까지 맞춰줍니다. 이 조건들을 제외한 인자 값은 임의로 설정하였습니다.
+By manipulating calldata like this, you can fix the `msg.data[4:4 + len]` part that affects $\beta$ and $\gamma$ to a constant. So the values of $\beta$ and $\gamma$ are also fixed! We can solve `challenge2` by applying the result obtained earlier. The actual values of $n, f, t, s_{1}, s_{2}$ are set as follows. Let's use the previously derived $f[0], s_{2}[n - 1], s_{2}[n - 2]$, also matching the condition $s_{1}[n] = s_{2}[0]$. Except for these conditions, other arguments were set arbitrarily.
 
 $$ n = 3, f = [-\gamma, 0, 0], t = s_{1} = [1, 2, 3, 4], s_{2} = [4, 0, - \gamma (1 + \beta), 0]$$
 
-고정된 $\beta$와 $\gamma$값을 알아내기 위하여 다른 인자인 $t, s_{1}, s_{2}$에 해당하는 부분도 offset을 수정합니다. `msg.data[4:4 + len]`의 값을 다음과 같이 고정합니다.
+In order to find out the fixed $\beta$ and $\gamma$ values, offsets are also modified for the other factors $t, s_{1}, s_{2}$. Fix the value of `msg.data[4:4 + len]` as follows.
 
 ```
 000 0000000000000000000000000000000000000000000000000000000000000003    # 1st argument: n = 0x3
@@ -533,7 +533,7 @@ $$ n = 3, f = [-\gamma, 0, 0], t = s_{1} = [1, 2, 3, 4], s_{2} = [4, 0, - \gamma
 2e0 0000000000000000000000000000000000000000000000000000000000000000    # dummy value: 0x0
 ```
 
-위 값을 calldata의 일부로 설정하여, $\beta$와 $\gamma$를 계산합니다. 최종 calldata는 위 데이터 앞에 알맞은 [function selector](https://solidity-by-example.org/function-selector/)를 추가해야 합니다. `challenge2` 메소드의 function selector의 값은 `b6ebb13b`이었습니다. $\beta$와 $\gamma$를 구하기 위해 간단한 테스트 스마트 컨트랙트를 작성하였습니다. 
+By setting the above values as part of calldata, $\beta$ and $\gamma$ are calculated. The final calldata needs to prepend the appropriate [function selector](https://solidity-by-example.org/function-selector/) to the data above. The value of the function selector of the `challenge2` method was `b6ebb13b`. I wrote a simple test smart contract to get $\beta$ and $\gamma$.
 
 ```solidity
 pragma solidity 0.8.0;
@@ -559,13 +559,13 @@ contract Test {
 }
 ```
 
-`test2` 메소드를 실행하는 transaction의 receipt에 $\beta$와 $\gamma$가 포함되어 있습니다. 도출된 값은 아래와 같습니다.
+$\beta$ and $\gamma$ are included in the receipt of the transaction executing the `test2` method. The derived values are shown below.
 
 $$ \beta = \texttt{0x19b0d1539797a71ab7ce45e7209ec515ce4cca508bad4b7671b58b1d2509af02} $$
 
 $$ \gamma = \texttt{0x220279eb49199b1cdffbc3b5e4f673d917a9d78aeeeedf464e161556d8b91337} $$
 
-$\beta$와 $\gamma$를 구하였으므로 $n, f, t, s_{1}, s_{2}$가 결정되어 `challenge2`를 해결하였습니다. Calldata layout의 이해가 필요한 문제였습니다. 최종적으로 보내야 하는 calldata는 앞서 offset를 조작하고 dummy value로 채워진 `msg.data[4:4 + len]` 부분 뒤로 실제 인자 값을 다음과 같이 추가하여야 합니다.
+Since $\beta$ and $\gamma$ were obtained, $n, f, t, s_{1}, s_{2}$ were determined and `challenge2` was resolved. It was a problem that required an understanding of calldata layout. For the calldata to be finally sent, the actual argument value should be added after the `msg.data[4:4 + len]` part, which was filled with dummy value after manipulating the offset previously.
 
 ```
 300 0000000000000000000000000000000000000000000000000000000000000003    # 2nd argument: f.length = 0x3
@@ -589,9 +589,9 @@ $\beta$와 $\gamma$를 구하였으므로 $n, f, t, s_{1}, s_{2}$가 결정되�
 540 0000000000000000000000000000000000000000000000000000000000000000    # s2[3] = 0x0
 ```
 
-### `challenge3` 통과하기
+### Passing `challenge3`
 
-마지막 단계인 `challenge3`입니다. $\beta$와 $\gamma$를 계산하는 로직이 아래와 같이 바뀌었습니다. $s_{1}[n] = s_{2}[0]$ 및 `sanity_check`, `final_check`를 통과하는 것은 동일합니다.
+`challenge3` is the last step of the challenge. The logic for calculating $\beta$ and $\gamma$ has been changed as follows. $s_{1}[n] = s_{2}[0]$ and passing `sanity_check`, `final_check` is identical.
 
 ```solidity
 bytes32 beta; bytes32 gamma;
@@ -609,35 +609,35 @@ for(uint i = 0 ; i < 4 * n + 7 ; i++) {
 }
 ```
 
-`challenge2`와 동일하게 주어진 EVM Assembly를 분석해봅시다.
+Let's analyze the given EVM Assembly in the same way as `challenge2`.
 
-#### EVM Assembly 분석
+#### EVM Assembly Analysis
 
-1. `mload(0x40)`: `ptr = memory[0x40:0x40 + 32]`를 수행합니다. `0x40`에는, EVM의 [free memory pointer](https://ethereum.stackexchange.com/questions/9603/understanding-mload-assembly-function)가 저장되어 있습니다. 연산하기 위하여 필요한 메모리의 위치를 우선 확보하는 것입니다.
-2. `mstore(ptr, beta)`: `memory[ptr:ptr + 32] = beta`를 수행합니다.
-3. `mstore(add(ptr, 32), gamma)`: `memory[ptr + 32:ptr + 64] = gamma`를 수행합니다.
-4. `mstore(add(ptr, 64), mload(add(0x80, mul(i, 32))))`: `memory[ptr + 64: ptr + 96] = memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`를 수행합니다. `memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`에는 calldata로부터 파싱된 실제 인자의 값이 저장되어 있습니다. calldata에 저장된 인자를 memory 영역에 적는 코드는 프로그래머가 직접 구현하는 것이 아닌, EVM assembly 형태로 미리 구현되어 있습니다. `challenge3(uint256 n, uint256[] memory f, uint256[] memory t, uint256[] memory s1, uint256[] memory s2)`에서 memory라는 키워드를 사용하였으므로, 메소드 로직 실행 전 메모리에 미리 calldata에 포함된 인자를 복사하고, 그 위치가 `memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`인 것입니다.
+1. `mload(0x40)`: `ptr = memory[0x40:0x40 + 32]`. In `0x40`, EVM's [free memory pointer](https://ethereum.stackexchange.com/questions/9603/understanding-mload-assembly-function) is stored. It is to first secure the location of memory necessary for calculation.
+2. `mstore(ptr, beta)`: `memory[ptr:ptr + 32] = beta`.
+3. `mstore(add(ptr, 32), gamma)`: `memory[ptr + 32:ptr + 64] = gamma`.
+4. `mstore(add(ptr, 64), mload(add(0x80, mul(i, 32))))`: `memory[ptr + 64: ptr + 96] = memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`. In `memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`, the value of the actual argument parsed from calldata is stored. The code that writes the arguments stored in the calldata to the memory area is not directly implemented by the programmer, but is implemented in advance in the form of an EVM assembly. Since the memory keyword was used in `challenge3(uint256 n, uint256[] memory f, uint256[] memory t, uint256[] memory s1, uint256[] memory s2)`, before the method logic execution, it copies the argument included in calldata to the location at `memory[0x80 + 32 * i: 0x80 + 32 * (i + 1)]`.
 5. `mstore8(add(ptr, 96), 1)`: `memory[ptr + 96] = 1`
 6. `mstore8(add(ptr, 97), 2)`: `memory[ptr + 97] = 2`
-7. `beta := keccak256(ptr, 97)`: `beta = keccak256(memory[ptr, ptr + 97])`, 즉 `[copied beta | copied gamma | i th parsed calldata | 1]`데이터를 해싱하여 `beta`를 업데이트합니다.
-8. `gamma := keccak256(ptr, 98)`: `gamma = keccak256(memory[ptr, ptr + 98])`, 즉 `[copied beta | copied gamma | i th parsed calldata | 1 | 2 ]`데이터를 해싱하여 `gamma`를 업데이트합니다.
-9. `i`값을 증가시켜가면서, 파싱된 calldata에 대하여 1번부터 8번까지의 로직을 반복합니다. 파싱된 calldata의 32 byte 개수는 `4 * n + 7`이므로, 주어진 모든 calldata에 대하여 반복문을 수행합니다. 각 iteration마다 $\beta$와 $\gamma$의 값이 업데이트 됩니다.
+7. `beta := keccak256(ptr, 97)`: `beta = keccak256(memory[ptr, ptr + 97])`, i.e. Hashing `[copied beta | copied gamma | i th parsed calldata | 1] ` and update `beta`.
+8. `gamma := keccak256(ptr, 98)`: `gamma = keccak256(memory[ptr, ptr + 98])`, i.e. Hashing `[copied beta | copied gamma | i th parsed calldata | 1 | 2 ]` and update `gamma`.
+9. Repeat the logic from 1 to 8 for the parsed calldata while increasing the value of `i`. Since the number of 32 bytes of parsed calldata is `4 * n + 7`, iterates over all given calldata. The values of $\beta$ and $\gamma$ are updated on each iteration.
 
-`challenge2`와는 다르게, EVM이 calldata내부에 포함된 offset및 인자를 직접 파싱합니다. 그리고 그 값을 그대로 $\beta$와 $\gamma$를 계산하는 데 활용합니다. calldata에 포함된 인자에 따라, $\beta$와 $\gamma$가 의존적입니다. `challenge2`에서 분석하였던 [유한체 위에서의 다항식 인수분해의 유일성](#유한체-위에서의-다항식-인수분해의-유일성)에 의해, 문제를 풀 수 없을 것만 같습니다.
+Unlike `challenge2`, the EVM directly parses the offset and arguments contained inside the calldata. And use that value as it is to calculate $\beta$ and $\gamma$. Depending on the arguments contained in calldata, $\beta$ and $\gamma$ are dependent. It seems that the problem cannot be solved by the [uniqueness of polynomial factorization on a finite field](#Uniqueness-of-polynomial-factorization-on-a-finite-field) analyzed in `challenge2`.
 
-지금까지는 문제에서 직접적으로 제시된, 컴파일 되지 않은 코드를 읽어서 분석하였습니다. 그렇다면 실제 EVM에 배포된 EVM bytecode를 의심할 차례입니다. 정말 내가 읽고 있는 코드의 symantic과 동일한 코드가 블록체인에서 동작하고 있는지 확인합니다.
+So far, we have read and analyzed the uncompiled code presented directly in the problem. Then it's time to question the EVM bytecode deployed on the actual EVM. Lets make sure that the same code as the symantic of the code I'm reading is running on the blockchain.
 
-#### Solidity Optimizer Keccak Caching Bug: $\beta = \gamma$ 확인하기
+#### Solidity Optimizer Keccak Caching Bug: Confirm $\beta = \gamma$
 
-문제에서 제시된 코드와 블록체인에서 동작하는 코드가 달라지려면, EVM bytecode를 생성하는 Solidity 컴파일러의 버그가 존재하여야 합니다. 대회 당시 Solidity의 최신 버전은 [0.8.17](https://github.com/ethereum/solidity/releases/tag/v0.8.17)이지만, 문제에서 사용한 Solidity 버전은 `0.8.0`입니다. 자연스럽게, 두 버전 사이에 패치된 버그 리스트를 찾아봅니다. 
+In order for the code presented in the problem to differ from the code operating on the blockchain, there must be a bug in the Solidity compiler that generates EVM bytecode. The latest version of Solidity at the time of the competition is [0.8.17](https://github.com/ethereum/solidity/releases/tag/v0.8.17), but the Solidity version used in the problem is `0.8.0`. Naturally, lets look up the list of bugs patched between the two versions.
 
-[Solidity blog](https://blog.soliditylang.org/)에 올라온 Security Alert 레이블이 붙은 글을 모두 읽던 중, [Solidity Optimizer Keccak Caching Bug](https://blog.soliditylang.org/2021/03/23/keccak-optimizer-bug/) 글을 발견하였습니다. `0.8.3` 이전의 모든 버전에 존재한 버그입니다. 버그의 요약은 다음과 같습니다.
+While reading all the posts labeled Security Alert posted on [Solidity blog](https://blog.soliditylang.org/), [Solidity Optimizer Keccak Caching Bug](https://blog.soliditylang.org/2021/03/23/keccak-optimizer-bug/) was found. This is a bug that existed in all versions prior to `0.8.3`. A summary of the bug is as follows.
 
 > The bytecode optimizer incorrectly re-used previously evaluated Keccak-256 hashes. You are unlikely to be affected if you do not compute Keccak-256 hashes in inline assembly.
 
 > Specifically, keccak256(mpos1, length1) and keccak256(mpos2, length2) in some cases were considered equal if length1 and length2, when rounded up to nearest multiple of 32 were the same, and when the memory contents at mpos1 and mpos2 can be deduced to be equal.
 
-`challenge3`에서는 inline assembly로 해싱을 수행합니다. 문제 상황과 일치합니다. `beta := keccak256(ptr, 97)`, `gamma := keccak256(ptr, 98)`이기 때문입니다. 만약 버그가 발생하였다면, `beta = gamma := keccak256(ptr, 97)`에 대응되는 bytecode가 생성되었다는 것입니다. 내가 읽고 있는 코드의 symantic과 다른 코드가 블록체인에서 동작하고 있는지 `getCode` Ethereum JSONRPC(`getCode(contract address, latest)`)를 통하여 배포된 bytecode를 확인하여, 이를 [EVM bytecode 디컴파일러](https://ethervm.io/decompile) 활용하여 로직으로 최적화하는 버그가 발생하였는지 확인합니다. 아래는 디컴파일된 $\beta$와 $\gamma$를 계산하는 로직입니다.
+`challenge3` performs hashing with inline assembly. It matches the problem situation. This is because `beta := keccak256(ptr, 97)`, `gamma := keccak256(ptr, 98)`. If there is a bug, it means that the bytecode corresponding to `beta = gamma := keccak256(ptr, 97)` is generated. Check the bytecode distributed through `getCode` Ethereum JSONRPC (`getCode(contract address, latest)`) to see if the symantic of the code we are reading differs with the code operating on the blockchain, and use [EVM bytecode decompiler](https://ethervm.io/decompile) to check the optimization bug has occurred. Below is the decompiled logic for calculating $\beta$ and $\gamma$.
 
 ```solidity
 ...
@@ -652,7 +652,7 @@ var1 = var0;
 ...
 ```
 
-`var0`은 $\beta$, `var1`은 $\gamma$에 해당됩니다. `var1 = var0;`라는 코드를 관찰하여, bytecode optimizer bug가 발생하여 $\beta = \gamma$임을 확인하였습니다. 로컬 환경에서도 확인할 수 있습니다. [`solc-select`](https://github.com/crytic/solc-select)으로 Solidity version을 `0.8.0`으로 맞춰 준 후, [`solc`](https://www.npmjs.com/package/solc)의 최적화 플래그 `--optimize`를 사용하여 버그 발생을 확인할 수도 있습니다.
+`var0` corresponds to $\beta$ and `var1` corresponds to $\gamma$. By observing the code `var1 = var0;`, it is confirmed that $\beta = \gamma$ because of a bytecode optimizer bug. We can also check it in local environment. After setting the Solidity version to `0.8.0` with [`solc-select`](https://github.com/crytic/solc-select), use the optimization flag `--optimize` in [`solc`](https://www.npmjscom/package/solc) to check the bug is triggered.
 
 ```bash
 $ solc-select install 0.8.0 && solc-select use 0.8.0
@@ -660,7 +660,7 @@ $ solc --optimize Challenge.sol --asm
 $ solc Challenge.sol --asm
 ```
 
-$\beta = \gamma$를 확인하였습니다. 이 강력한 조건을 활용하여 `challenge3`를 통과하는 $n, f, t, s_{1}, s_{2}$ 값을 구해봅시다. 동일한 symantic을 가진 python코드를 작성하여 전수조사를 실시하였습니다. 이때, $n = 3$으로 설정하였으며, 다른 인자의 값들은 $0, 1, 2$ 중 하나로 설정하였습니다. $\beta = \gamma$와 같은 강력한 조건이면 조사 범위를 이 정도로 한정해도 해가 존재할 것이라 생각하였습니다. $\beta = \gamma$의 값을 랜덤한 임의의 수로 설정하였습니다.
+$\beta = \gamma$ checked. Let's use this powerful condition to find the values of $n, f, t, s_{1}, s_{2} that pass `challenge3`. A python code with the same symantic was written and bruteforcing was conducted. At this time, $n = 3$ was set, and the values of other factors were set to one of $0, 1, and 2$. It was thought that $\beta = \gamma$ condition is so strong, there would be a solution even if the enumeration range was limited to this extent. We set the value of $\beta = \gamma$ to a random number.
 
 ```python
 import random
@@ -748,15 +748,15 @@ if __name__ == "__main__":
     print(f"{s2 = }")
 ```
 
-제 예상이 맞았습니다. 1초 이내로 $n, f, t, s_{1}, s_{2}$값을 찾을 수 있었습니다. 그 결과는 다음과 같습니다.
+My prediction was correct. We were able to find the values of $n, f, t, s_{1}, s_{2}$ within 1 second. The result is:
 
 $$ n = 3, f = [2, 0, 0], t = [1, 0, 0, 0], s_{1} = [0, 1, 1, 0], s_{2} = [0, 0, 0, 0] $$
 
-### 대망의 `flag` 얻기
+### Getting the long-awaited `flag`
 
-`challenge1`, `challenge2`, `challenge3`를 모두 호출하여, `require`를 피하는 인자를 사용하여 `solved1`, `solved2`, `solved3` bool 변수를 모두 참으로 만들었습니다. `declaredSolved` 메소드를 마지막으로 호출하여, `solved` bool 변수를 참으로 만들어줍니다.
+Lets call `challenge1`, `challenge2` and `challenge3` to set bool variables `solved1`, `solved2` and `solved3` to true, using arguments that passes every `require` condition. We finally call the `declaredSolved` method, making the `solved` bool variable true.
 
-다시 문제 endpoint에 접속하여, `flag`를 얻어냅시다. 길고도 힘든 과정이었습니다.
+Connect to the problem endpoint again and get the `flag`. It was a long and difficult process.
 
 ```bash
 $ nc 3.34.81.192 31337
@@ -768,25 +768,25 @@ ticket please: kaistgonbestteam
 codegate2022{1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_50_ju57_k33p_y0ur_h34r75_w4rm!_4l50_50l1d17y_0.8.3_15_h3r3_70_54v3_u5!}
 ```
 
-저 긴 string이 `flag`입니다. 문제의 난이도에 걸맞게 `flag`도 다량의 정보량을 함유하고 있습니다. 참고로 비슷하게 생긴 숫자와 알파벳을 섞어서 단어를 사용하는 것을 [Leetspeak](https://en.wikipedia.org/wiki/Leet)이라고 합니다. `flag`의 내용을 보아하니, 다음 사실을 배울 수 있었습니다.
+That long string is `flag`. Befitting the difficulty of the problem, even `flag` contains a large amount of information. For reference, using words by mixing similar-looking numbers and alphabets is called [Leetspeak](https://en.wikipedia.org/wiki/Leet). Looking at the contents of `flag`, I learned the following fact.
 
-1. 제시된 $GF(p)$위의 다항식은 zero knowledge [plonkup](https://eprint.iacr.org/2022/086.pdf)와 관련이 있습니다. IACR eprint 번호가 `2022/086` 입니다.
-- `1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_`
-2. `challenge2`에 해당하는 공격 기법을 [frozen heart vulnerability](https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/)라고 합니다. [CVE-2022-29566](https://nvd.nist.gov/vuln/detail/CVE-2022-29566)도 있습니다.
-- `50_ju57_k33p_y0ur_h34r75_w4rm!_`
-3. `challenge3`에서 사용된 solidity 버그는 `0.8.3` 버전에서 패치되었습니다.
-- `4l50_50l1d17y_0.8.3_15_h3r3_70_54v3_u5!`
+1. The polynomial above $GF(p)$ presented in the challenge is related to zero knowledge [plonkup](https://eprint.iacr.org/2022/086.pdf). The IACR eprint number is `2022/086`.
+    - `1mpr0v1n6_pl00kup_15_h4rd_4f73r_4ll_bu7_47_l3457_w3_h4v3_2022/086_`
+2. The attack technique corresponding to `challenge2` is called [frozen heart vulnerability](https://blog.trailofbits.com/2022/04/18/the-frozen-heart-vulnerability-in-plonk/). There is also [CVE-2022-29566](https://nvd.nist.gov/vuln/detail/CVE-2022-29566).
+    - `50_ju57_k33p_y0ur_h34r75_w4rm!_`
+3. The solidity bug used in `challenge3` has been patched in version `0.8.3`.
+    - `4l50_50l1d17y_0.8.3_15_h3r3_70_54v3_u5!`
 
-`flag`를 해석하니 문제 풀이에 대한 세줄 요약임을 깨달을 수 있었습니다.
+By parsing the `flag`, I realized that it was a three line summary of the solution to the problem.
 
 ### Wrap Up
 
-정리하여, zero knowledge plonkup의 소개 및 공격 기법, solidity 버그를 비빈 밀도 높은 문제였습니다. 이 글에서는 plonkup에 대한 이론적 분석은 하지 않았지만, zero knowledge에 대하여 흥미를 돋우는 좋은 문제였습니다. 적절하게 섞인 solidity gimmick도 재미있었습니다.
+In summary, it was a high-density problem of introducing zero knowledge plonkup, attack techniques, and solidity bugs. In this article, I did not do a theoretical analysis of plonkup, but it was a good problem that sparked interest in zero knowledge. The properly blended solidity gimmick was also fun.
 
-문제 저자인 [rkm0959](https://rkm0959.tistory.com/)이 쓰신 [문제 해설](https://zkresear.ch/t/codegate-ctf-2022-look-it-up-writeup-deeper-look-at-plookup/47)도 있습니다. 이 글과 다른 점은, 저는 문제 풀이자의 입장에서 zero knowledge에 대한 이해 없이 문제를 풀이하였다는 것입니다. 또 출제자의 풀이는 onchain에서 문제를 풀이하는데 필요한 payload를 작성하였습니다. Zero knowledge에 대한 deep dive를 하려면, 출제자의 해설을 이해하거나, 제가 이어서 쓸 zero knowledge관련 글을 읽어주시면 감사하겠습니다. 다사다난하였던 긴 글을 끝까지 따라와 주셔서 감사합니다!
+There is also a [writeup](https://zkresear.ch/t/codegate-ctf-2022-look-it-up-writeup-deeper) written by [rkm0959](https://rkm0959.tistory.com/) who is the problem presenter. The difference from this article is that I solved the problem without understanding zero knowledge. In addition, the presenter created the necessary payload to solve the problem in onchain. If you want to do a deep dive on zero knowledge, I would recommend to understand the commentary of the presenter or read the articles related to zero knowledge that I will write next. Thank you for following through to the end of this eventful long post!
 
 ### Exploit Artifacts
 
-최종 공격 코드는 [solve.py](solve.py)에 작성하였습니다. [requirements.txt](requirements.txt)가 의존성입니다. 각 `challenge1`, `challenge2`, `challenge3` 메소드가 문제의 각 단계를 풀이합니다. 실제 공격을 수행하려면, 앞서 언급하였듯이 인프라를 구축하여 ethereum 클라이언트를 구동시킨 후, 문제를 배포하여야 합니다.
+The final attack code was written in [solve.py](solve.py). [requirements.txt](requirements.txt) is a dependency. Each `challenge1`, `challenge2`, `challenge3` method solves each step of the problem. To perform an actual attack, as mentioned earlier, you need to build the infrastructure, run the ethereum client, and then deploy the challenge.
 
-문제 배포 파일: [Challenge.sol](Challenge.sol), [Setup.sol](Setup.sol)
+Challenge distribution file: [Challenge.sol](Challenge.sol), [Setup.sol](Setup.sol)
