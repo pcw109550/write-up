@@ -345,7 +345,7 @@ The newly added contraint gives me a headache. It is not easy to find an input t
 
 #### Uniqueness of polynomial factorization on a finite field
 
-Among the $2n$ polynomials forming the right side of $A$, lets pick the polynomial affected by $s_{1}[n], s_{2}[0]$. Let $P(\beta, \gamma) = (\gamma(1 + \beta) + s_{1}[n] \beta + s_{1}[n - 1]), Q(\beta, \gamma) = (\gamma(1 + \beta) + s_{2}[1] \beta + s_{2}[0])$. $P$ and $Q$ are polynomials which are affected. Both expressions are linear with respect to $\beta, \gamma$. To cancel out the effect of the above two terms, let's observe the left side of the equation $A$.
+Among the $2n$ polynomials forming the right side of $A$, lets pick the polynomial affected by $s_{1}[n], s_{2}[0]$. Let $P(\beta, \gamma) = (\gamma(1 + \beta) + s_{1}[n] \beta + s_{1}[n - 1])$, $Q(\beta, \gamma) = (\gamma(1 + \beta) + s_{2}[1] \beta + s_{2}[0])$. $P$ and $Q$ are polynomials which are affected. Both expressions are linear with respect to $\beta, \gamma$. To cancel out the effect of the above two terms, let's observe the left side of the equation $A$.
 
 $$ (1 + \beta)^{n} \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} (\gamma + f[i]) $$
 
@@ -355,11 +355,17 @@ $$ \prod_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) \prod_{i=0}^{n} 
 
 Of the $2 n$ polynomials constituting the left side of $A$, $P$ and $Q$ on the right side correspond to two polynomials. Observing the coefficients of $2n - 2$ polynomials forming the right side, excluding $P$ and $Q$, $s_{1}[i]$ and $s_{2}[i]$ for $i$ in $0 < i < n$ will be used twice each in the polynomial.
 
-By this property, $P(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) $, $Q(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + f[i] \beta + f[i]) $ is derived. The position of $P$ and $Q$ can be interchanged. This means that $P$ and $Q$ cannot be placed leaning to one side. Then, since $s_{1}[n] = s_{2}[0]$ must be satisfied, the condition that the intersection of the elements of $t$ derived from `final_check` and the elements of $f$ is an empty set can't be satisfied. All of these arguments are based on the fact that the [polynomial factorization on a finite field](https://en.wikipedia.org/wiki/Factorization_of_polynomials_over_finite_fields) is unique.
+By this property, below two condition is derived.
+
+$$P(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + t[i + 1] \beta + t[i]) $$
+
+$$Q(\beta, \gamma) \mid \Pi_{i=0}^{n} (\gamma (1 + \beta) + f[i] \beta + f[i]) $$
+
+The position of $P$ and $Q$ can be interchanged. This means that $P$ and $Q$ cannot be placed leaning to one side. Then, since $s_{1}[n] = s_{2}[0]$ must be satisfied, the condition that the intersection of the elements of $t$ derived from `final_check` and the elements of $f$ is an empty set can't be satisfied. All of these arguments are based on the fact that the [polynomial factorization on a finite field](https://en.wikipedia.org/wiki/Factorization_of_polynomials_over_finite_fields) is unique.
 
 #### EVM Assembly Analysis
 
-If so, the assumption made above($\beta$ and $\gamma$ is dependent) is wrong. Naturally, we start thinking about why the logic for calculating $\beta$ and $\gamma$ has changed. Let's take a look at the inline assembly step by step to check again whether $\beta$ and $\gamma$ are really determined according to the method arguments we entered. Let's refer to [EVM Opcode Specification](https://ethervm.io/).
+If so, the assumption made above is wrong. Naturally, we start thinking about why the logic for calculating $\beta$ and $\gamma$ has changed. Let's take a look at the inline assembly step by step to check again whether $\beta$ and $\gamma$ are really determined according to the method arguments we entered. Let's refer to [EVM Opcode Specification](https://ethervm.io/).
 
 ```solidity
 uint256 len = (12 + 4 * n) * 0x20;
@@ -660,7 +666,7 @@ $ solc --optimize Challenge.sol --asm
 $ solc Challenge.sol --asm
 ```
 
-$\beta = \gamma$ checked. Let's use this powerful condition to find the values of $n, f, t, s_{1}, s_{2} that pass `challenge3`. A python code with the same symantic was written and bruteforcing was conducted. At this time, $n = 3$ was set, and the values of other factors were set to one of $0, 1, and 2$. It was thought that $\beta = \gamma$ condition is so strong, there would be a solution even if the enumeration range was limited to this extent. We set the value of $\beta = \gamma$ to a random number.
+$\beta = \gamma$ checked. Let's use this powerful condition to find the argument values that pass `challenge3`. A python code with the same symantic was written and bruteforcing was conducted. At this time, $n = 3$ was set, and the values of other factors were set to one of $0, 1, and 2$. It was thought that $\beta = \gamma$ condition is so strong, there would be a solution even if the enumeration range was limited to this extent. We set the value of $\beta = \gamma$ to a random number.
 
 ```python
 import random
