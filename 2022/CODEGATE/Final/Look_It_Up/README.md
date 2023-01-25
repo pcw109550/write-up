@@ -2,7 +2,7 @@
 
 >  Submitted to KAIST Orakle Blockchain Academy
 
-Hi. The KAIST GoN team [won](https://cs.kaist.ac.kr/board/view?bbs_id=news&bbs_sn=10476&page=1&skey=subject&svalue=&menu=83) the CODEGATE 2022 international hacking defense competition (CTF) held on November 7th and 8th, 2022. Our team consisted of a team of 4 including me, and I contributed by solving problems related to blockchain and cryptography during the finals.
+Hi. The KAIST GoN team [won](https://cs.kaist.ac.kr/board/view?bbs_id=news&bbs_sn=10476&page=1&skey=subject&svalue=&menu=83) the CODEGATE 2022 International Hacking Defense Competition (CTF) university division held on November 7 and 8, 2022. Our team consisted of a team of 4 including me, and I contributed by solving problems related to blockchain and cryptography during the finals.
 
 In this article, I would like to introduce CTF, solve the blockchain problem (problem name: `Look It Up`) that was presented in the finals, and deal with the background knowledge to understand it. I hope this article is a pleasant starting point for understanding blockchain security.
 
@@ -99,7 +99,7 @@ action? 1
 ticket please: kaistgonbestteam
 ```
 
-To tinker with the problem, I entered action(`1`) and ticket(`kaistgonbest`) as Stdin. Stdout to it yields:
+To tinker with the problem, I entered action(`1`) and ticket(`kaistgonbestteam`) as Stdin. Stdout to it yields:
 
 ```
 your private blockchain has been deployed

@@ -637,7 +637,7 @@ for(uint i = 0 ; i < 4 * n + 7 ; i++) {
 
 > Specifically, keccak256(mpos1, length1) and keccak256(mpos2, length2) in some cases were considered equal if length1 and length2, when rounded up to nearest multiple of 32 were the same, and when the memory contents at mpos1 and mpos2 can be deduced to be equal.
 
-`challenge3`에서는 inline assembly로 해싱을 수행합니다. 문제 상황과 일치합니다. `beta := keccak256(ptr, 97)`, `gamma := keccak256(ptr, 98)`이기 때문입니다. 만약 버그가 발생하였다면, `beta = gamma := keccak256(ptr, 97)`에 대응되는 bytecode가 생성되었다는 것입니다. 내가 읽고 있는 코드의 symantic과 다른 코드가 블록체인에서 동작하고 있는지 `getCode` Ethereum JSONRPC(`getCode(contract address, latest)`)를 통하여 배포된 bytecode를 확인하여, 이를 [EVM bytecode 디컴파일러](https://ethervm.io/decompile) 활용하여 로직으로 최적화하는 버그가 발생하였는지 확인합니다. 아래는 디컴파일된 $\beta$와 $\gamma$를 계산하는 로직입니다.
+`challenge3`에서는 inline assembly로 해싱을 수행합니다. 문제 상황과 일치합니다. `beta := keccak256(ptr, 97)`, `gamma := keccak256(ptr, 98)`이기 때문입니다. 만약 버그가 발생하였다면, `beta = gamma := keccak256(ptr, 97)`에 대응되는 bytecode가 생성되었다는 것입니다. 내가 읽고 있는 코드의 symantic과 다른 코드가 블록체인에서 동작하고 있는지 `getCode` Ethereum JSONRPC(`getCode(contract address, latest)`)를 통하여 배포된 bytecode를 확인하여, 이를 [EVM bytecode 디컴파일러](https://ethervm.io/decompile)를 활용하여 로직으로 최적화하는 버그가 발생하였는지 확인합니다. 아래는 디컴파일된 $\beta$와 $\gamma$를 계산하는 로직입니다.
 
 ```solidity
 ...
