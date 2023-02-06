@@ -2,6 +2,12 @@
 
 CTF write-ups written by me. Mostly crypto and blockchain!
 
+## 2023
+
+- **DiceCTF 2023**
+	- Crypto 199 - BBBB - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/Dice/BBBB)
+		- LCG parameter selection to make RNG cyclic + Coppersmith Attack
+
 ## 2022
 
 - **CODEGATE 2022 Final**
