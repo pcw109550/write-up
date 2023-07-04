@@ -3,3 +3,4 @@
 *.sage.py
 tempCodeRunnerFile.*
 venv
+__pycache__
