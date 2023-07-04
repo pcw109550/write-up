@@ -4,6 +4,11 @@ CTF write-ups written by me. Mostly crypto and blockchain!
 
 ## 2023
 
+- **CCE 2023**
+	- Crypto 451 - NZK-SIARK - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/CCE/NZK-SIARK)
+		- AES intermdiate state forgery
+	- Crypto 451 - De-Identification - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/CCE/De-Identification)
+		- Format Preserving encryption
 - **DiceCTF 2023**
 	- Crypto 199 - BBBB - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/Dice/BBBB)
 		- LCG parameter selection to make RNG cyclic + Coppersmith Attack
