@@ -4,6 +4,9 @@ CTF write-ups written by me. Mostly crypto and blockchain!
 
 ## 2023
 
+- **TSG CTF 2023**
+	- Crypto 341 - Delta Force - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/TSG/Delta-Force)
+		- DLP over singular curve over composite ring: Reduction to additive Group / Pohlig Hellman
 - **CCE 2023**
 	- Crypto 451 - NZK-SIARK - [Writeup](https://github.com/pcw109550/write-up/tree/master/2023/CCE/NZK-SIARK)
 		- AES intermdiate state forgery
